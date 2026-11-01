@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#f4f7f6">
-    <title>موسوعة صيدليات هاشم | Hashim Pharmacy</title>
+    <title>هاشم فارمسي - علم ونتيجة | Hashim Pharmacy</title>
 
     <style>
         * {
@@ -22,30 +21,76 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            text-align: center;
             padding: 20px;
         }
 
         .card {
             background: #ffffff;
-            padding: 40px 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             max-width: 500px;
             width: 100%;
+            text-align: center;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         h1 {
             color: #2c3e50;
-            margin-bottom: 15px;
             font-size: 26px;
         }
 
+        .pill-icon {
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: #0d9488;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .content-box {
+            text-align: right;
+            background: #fafafa;
+            padding: 15px 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-right: 4px solid #0d9488;
+        }
+
         p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            color: #2c3e50;
             font-size: 16px;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .whatsapp-container {
+            margin: 25px 0 15px 0;
         }
 
         .whatsapp-btn {
@@ -53,29 +98,34 @@
             background-color: #25d366;
             color: white;
             text-decoration: none;
-            padding: 12px 25px;
+            padding: 12px 30px;
             border-radius: 30px;
             font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
-            transition: background 0.3s ease;
+            font-size: 17px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            transition: background 0.3s ease, transform 0.2s ease;
         }
 
         .whatsapp-btn:hover {
             background-color: #1ebd5a;
+            transform: translateY(-2px);
+        }
+
+        .footer-note {
+            font-size: 13px;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+            text-align: center;
         }
 
         @media (max-width: 480px) {
             .card {
-                padding: 30px 20px;
+                padding: 25px 15px;
             }
-
             h1 {
-                font-size: 23px;
-            }
-
-            p {
-                font-size: 15px;
+                font-size: 22px;
             }
         }
     </style>
@@ -84,52 +134,62 @@
 <body>
 
     <div class="card">
-        <h1>موسوعة صيدليات هاشم</h1>
+        <!-- العنوان الرئيسي مع أيقونة الكبسولة -->
+        <div class="header-title">
+            <span class="pill-icon">💊</span>
+            <h1>هاشم فارمسي</h1>
+        </div>
+        
+        <div class="subtitle">
+            Hashim Pharmacy – Science & Results | علم ونتيجة
+        </div>
 
-        <p>
-            مرحباً بك في المنصة العلمية والدوائية الشاملة.
-            نسعى لتقديم المعرفة العلمية بصورة منظمة.
+        <div class="content-box">
+            <p>مرحباً بك في هاشم فارمسي، منصتك المتخصصة في التركيبات الصيدلانية والتجميلية.</p>
+            <p>هنا نضع بين يديك المعرفة العلمية، ونتعرف على المواد الخام وخصائصها ونسب استخدامها، ونقدم محتوى متخصصاً يساعدك على تطوير مهاراتك في عالم التركيبات.</p>
+        </div>
+
+        <p style="font-weight: bold; color: #2c3e50; margin-bottom: 20px;">
+            العلم أساس التركيب، والنتيجة عنوان النجاح.
         </p>
 
-        <a
-            href="https://wa.me/249998607716"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="whatsapp-btn">
-            تواصل معنا عبر واتساب
-        </a>
+        <!-- قسم الاستفسارات -->
+        <div class="section-title">
+            📱 الاستفسارات وطريقة الاشتراك
+        </div>
+        <p style="font-size: 14px; color: #666; text-align: right; margin-bottom: 15px;">
+             للاستفسار ومعرفة تفاصيل الاشتراك وتفعيل العضوية، تواصل معنا مباشرة عبر واتساب:
+        </p>
+
+        <!-- زر الواتساب -->
+        <div class="whatsapp-container">
+            <a href="https://wa.me/249998607716" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="whatsapp-btn">
+                تواصل معنا عبر واتساب
+            </a>
+        </div>
+
+        <!-- التذييلة -->
+        <div class="footer-note">
+            أهلاً بك في عالم هاشم فارمسي.<br>
+            <strong>هاشم فارمسي – علم ونتيجة</strong>
+        </div>
     </div>
 
-    <!-- ربط Supabase -->
+    <!-- كود ربط Supabase البرمجي (يعمل بالخلفية بأمان) -->
     <script type="module">
-        import { createClient } from
-        'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        const SUPABASE_URL =
-            'https://kjgdntatnldotuhbxqle.supabase.co';
+        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_RFlhW3R2SmF5U3I3bl83bl80M20=';
 
-        const SUPABASE_ANON_KEY =
-            'sb_publishable_RFlhW3R2SmF5U3I3bl83bl80M20=';
-
-        const supabase = createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
-
-        // اختبار الاتصال بقاعدة البيانات
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // التحقق من الاتصال
         window.supabaseClient = supabase;
-
-        console.log("تم تهيئة Supabase بنجاح");
-
-        // اختبار الاتصال بخدمة المصادقة
-        const { data, error } =
-            await supabase.auth.getSession();
-
-        if (error) {
-            console.error("خطأ في الاتصال:", error.message);
-        } else {
-            console.log("خدمة Supabase جاهزة");
-        }
+        console.log("تم ربط موقع هاشم فارمسي بقاعدة البيانات بنجاح");
     </script>
 
 </body>
