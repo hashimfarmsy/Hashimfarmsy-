@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل طالب جديد - موسوعة هاشم للمواد الخام</title>
+    <title>تسجيل طالب جديد - هاشم فارمسي</title>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -13,28 +13,57 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
         .container {
             background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 400px;
-        }
-        h2 {
+            max-width: 450px;
             text-align: center;
+        }
+        .logo-section {
+            margin-bottom: 20px;
+        }
+        .logo-section h2 {
+            color: #333;
+            margin: 10px 0 5px 0;
+            font-size: 24px;
+        }
+        .logo-section p {
+            color: #00897b;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 0;
+        }
+        .intro-box {
+            background-color: #f9fbfb;
+            border-right: 4px solid #00897b;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: right;
+            margin-bottom: 20px;
+            color: #444;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .slogan {
+            font-weight: bold;
             color: #333;
             margin-bottom: 20px;
+            font-size: 15px;
         }
         .form-group {
             margin-bottom: 15px;
+            text-align: right;
         }
         label {
             display: block;
             margin-bottom: 5px;
             color: #555;
+            font-size: 14px;
         }
         input {
             width: 100%;
@@ -42,6 +71,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
+            font-family: Tahoma, sans-serif;
         }
         button {
             width: 100%;
@@ -53,16 +83,40 @@
             font-size: 16px;
             cursor: pointer;
             font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s;
         }
         button:hover {
             background-color: #1ebe5d;
+        }
+        .footer-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>إنشاء حساب جديد</h2>
+        <!-- قسم الهوية والواجهة القديمة -->
+        <div class="logo-section">
+            <h2>هاشم فارمسي 💊</h2>
+            <p>Hashim Pharmacy – Science & Results | علم ونتيجة</p>
+        </div>
+
+        <div class="intro-box">
+            مرحباً بك في هاشم فارمسي، منصتك المتخصصة في التركيبات الصيدلانية والتجميلية. 
+            هنا نضع بين يديك المعرفة العلمية، ونتعرف على المواد الخام وخصائصها ونسب استخدامها.
+        </div>
+
+        <div class="slogan">
+            العلم أساس التركيب، والنتيجة عنوان النجاح.
+        </div>
+
+        <!-- نموذج التسجيل الجديد والربط -->
         <form id="signupForm">
             <div class="form-group">
                 <label for="fullName">الاسم الكامل:</label>
@@ -86,9 +140,14 @@
 
             <button type="submit">إتمام التسجيل وإرسال إثبات الدفع</button>
         </form>
+
+        <div class="footer-text">
+            أهلاً بك في عالم هاشم فارمسي.<br>
+            هاشم فارمسي – علم ونتيجة
+        </div>
     </div>
 
-    <!-- ربط مكتبة Supabase -->
+    <!-- ربط مكتبة Supabase والتحكم بعملية التسجيل -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
