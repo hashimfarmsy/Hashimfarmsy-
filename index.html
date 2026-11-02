@@ -3,194 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f4f7f6">
-    <title>هاشم فارمسي - علم ونتيجة | Hashim Pharmacy</title>
-
+    <title>تسجيل طالب جديد - موسوعة هاشم للمواد الخام</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
+            font-family: Tahoma, sans-serif;
             background-color: #f4f7f6;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            margin: 0;
             padding: 20px;
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 35px 25px;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .header-title {
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        h1 {
-            color: #2c3e50;
-            font-size: 26px;
-        }
-
-        .pill-icon {
-            font-size: 24px;
-        }
-
-        .subtitle {
-            color: #0d9488;
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 25px;
-        }
-
-        .content-box {
-            text-align: right;
-            background: #fafafa;
-            padding: 15px 18px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border-right: 4px solid #0d9488;
-        }
-
-        p {
-            color: #555;
-            line-height: 1.7;
-            font-size: 15px;
-            margin-bottom: 12px;
-        }
-
-        p:last-child {
-            margin-bottom: 0;
-        }
-
-        .section-title {
-            color: #2c3e50;
-            font-size: 16px;
-            font-weight: bold;
-            margin: 20px 0 10px 0;
-            text-align: right;
-            display: flex;
             align-items: center;
-            gap: 8px;
+            height: 100vh;
         }
-
-        .whatsapp-container {
-            margin: 25px 0 15px 0;
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
         }
-
-        .whatsapp-btn {
-            display: inline-block;
-            background-color: #25d366;
-            color: white;
-            text-decoration: none;
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 17px;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-
-        .whatsapp-btn:hover {
-            background-color: #1ebd5a;
-            transform: translateY(-2px);
-        }
-
-        .footer-note {
-            font-size: 13px;
-            color: #888;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            margin-top: 15px;
+        h2 {
             text-align: center;
+            color: #333;
+            margin-bottom: 20px;
         }
-
-        @media (max-width: 480px) {
-            .card {
-                padding: 25px 15px;
-            }
-            h1 {
-                font-size: 22px;
-            }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #1ebe5d;
         }
     </style>
 </head>
-
 <body>
 
-    <div class="card">
-        <!-- العنوان الرئيسي مع أيقونة الكبسولة -->
-        <div class="header-title">
-            <span class="pill-icon">💊</span>
-            <h1>هاشم فارمسي</h1>
-        </div>
-        
-        <div class="subtitle">
-            Hashim Pharmacy – Science & Results | علم ونتيجة
-        </div>
+    <div class="container">
+        <h2>إنشاء حساب جديد</h2>
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="fullName">الاسم الكامل:</label>
+                <input type="text" id="fullName" required placeholder="أدخل اسمك الكامل">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">رقم الهاتف:</label>
+                <input type="tel" id="phone" required placeholder="09xxxxxxxx">
+            </div>
 
-        <div class="content-box">
-            <p>مرحباً بك في هاشم فارمسي، منصتك المتخصصة في التركيبات الصيدلانية والتجميلية.</p>
-            <p>هنا نضع بين يديك المعرفة العلمية، ونتعرف على المواد الخام وخصائصها ونسب استخدامها، ونقدم محتوى متخصصاً يساعدك على تطوير مهاراتك في عالم التركيبات.</p>
-        </div>
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني:</label>
+                <input type="email" id="email" required placeholder="example@domain.com">
+            </div>
 
-        <p style="font-weight: bold; color: #2c3e50; margin-bottom: 20px;">
-            العلم أساس التركيب، والنتيجة عنوان النجاح.
-        </p>
+            <div class="form-group">
+                <label for="password">كلمة المرور:</label>
+                <input type="password" id="password" required placeholder="********">
+            </div>
 
-        <!-- قسم الاستفسارات -->
-        <div class="section-title">
-            📱 الاستفسارات وطريقة الاشتراك
-        </div>
-        <p style="font-size: 14px; color: #666; text-align: right; margin-bottom: 15px;">
-             للاستفسار ومعرفة تفاصيل الاشتراك وتفعيل العضوية، تواصل معنا مباشرة عبر واتساب:
-        </p>
-
-        <!-- زر الواتساب -->
-        <div class="whatsapp-container">
-            <a href="https://wa.me/249998607716" 
-               target="_blank" 
-               rel="noopener noreferrer" 
-               class="whatsapp-btn">
-                تواصل معنا عبر واتساب
-            </a>
-        </div>
-
-        <!-- التذييلة -->
-        <div class="footer-note">
-            أهلاً بك في عالم هاشم فارمسي.<br>
-            <strong>هاشم فارمسي – علم ونتيجة</strong>
-        </div>
+            <button type="submit">إتمام التسجيل وإرسال إثبات الدفع</button>
+        </form>
     </div>
 
-    <!-- كود ربط Supabase البرمجي (يعمل بالخلفية بأمان) -->
+    <!-- ربط مكتبة Supabase (مصحح وخالٍ من الأخطاء) -->
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_RFlhW3R2SmF5U3I3bl83bl80M20=';
+        // ضع بيانات مشروعك هنا (Supabase URL & Anon Key)
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // التحقق من الاتصال
-        window.supabaseClient = supabase;
-        console.log("تم ربط موقع هاشم فارمسي بقاعدة البيانات بنجاح");
-    </script>
 
+        const form = document.getElementById('signupForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // 1. تسجيل المستخدم في Supabase Auth
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullName,
+                            phone: phone
+                        }
+                    }
+                });
+
+                if (error) throw error;
+
+                alert('تم إنشاء الحساب بنجاح! سيتم تحويلك الآن إلى الواتساب لإرسال إثبات الدفع.');
+
+                // 2. التوجيه إلى رقم واتساب الخاص بك مع رسالة مشفرة وآمنة
+                const whatsappMessage = encodeURIComponent(`مرحباً يا هندسة هاشم، لقد قمت بالتسجيل في الموسوعة باسم: ${fullName} ورقمي: ${phone} وهذا بريدي: ${email}. أرفق لك إثبات الدفع لتفعيل حسابي.`);
+                window.location.href = `https://wa.me/249998607716?text=${whatsappMessage}`;
+
+            } catch (error) {
+                alert('حدث خطأ أثناء التسجيل: ' + error.message);
+                console.error(error);
+            }
+        });
+    </script>
 </body>
 </html>
