@@ -68,7 +68,7 @@
                 <label for="fullName">الاسم الكامل:</label>
                 <input type="text" id="fullName" required placeholder="أدخل اسمك الكامل">
             </div>
-            
+
             <div class="form-group">
                 <label for="phone">رقم الهاتف:</label>
                 <input type="tel" id="phone" required placeholder="09xxxxxxxx">
@@ -88,13 +88,13 @@
         </form>
     </div>
 
-    <!-- ربط مكتبة Supabase (مصحح وخالٍ من الأخطاء) -->
+    <!-- ربط مكتبة Supabase -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        // ضع بيانات مشروعك هنا (Supabase URL & Anon Key)
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        // بيانات مشروع Supabase
+        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
+        const SUPABASE_ANON_KEY = 'Sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -124,7 +124,7 @@
 
                 alert('تم إنشاء الحساب بنجاح! سيتم تحويلك الآن إلى الواتساب لإرسال إثبات الدفع.');
 
-                // 2. التوجيه إلى رقم واتساب الخاص بك مع رسالة مشفرة وآمنة
+                // 2. التوجيه إلى رقم واتساب الخاص بك
                 const whatsappMessage = encodeURIComponent(`مرحباً يا هندسة هاشم، لقد قمت بالتسجيل في الموسوعة باسم: ${fullName} ورقمي: ${phone} وهذا بريدي: ${email}. أرفق لك إثبات الدفع لتفعيل حسابي.`);
                 window.location.href = `https://wa.me/249998607716?text=${whatsappMessage}`;
 
