@@ -130,7 +130,7 @@
             <p>Hashim Pharmacy – Science & Results | علم ونتيجة</p>
         </div>
 
-        <!-- المقدمة المطورة الاحترافية -->
+        <!-- المقدمة بالنص المطلوب بدقة -->
         <div class="intro-box">
             مرحباً بك في موسوعة هاشم للمواد الخام؛ مرجعك العلمي المتخصص لاكتشاف وفهم مواد التجميل والصناعات الصيدلانية، والتعمّق في خصائصها وتركيبها الكيميائي واستخداماتها وتوافقها وفق أسس علمية مدروسة. هنا تتحول المعرفة إلى خبرة، والمعلومة إلى قدرة على الاختيار والتطبيق بثقة ووعي.
         </div>
@@ -175,7 +175,7 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span)
+        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span)
         const SUPABASE_ANON_KEY = 'Sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -191,18 +191,15 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            // التحقق المسبق من طول كلمة المرور
             if (password.length < 6) {
                 alert('كلمة المرور يجب أن تكون 6 أحرف أو أرقام على الأقل.');
                 return;
             }
 
-            // تعطيل الزر لمنع الضغط المزدوج والتكرار
             submitBtn.disabled = true;
             submitBtn.textContent = 'جاري إنشاء الحساب...';
 
             try {
-                // 1. تسجيل المستخدم في Supabase Auth مع تمرير البيانات الوصفية
                 const { data, error } = await supabase.auth.signUp({
                     email: email,
                     password: password,
@@ -218,14 +215,12 @@
 
                 alert('تم إنشاء الحساب بنجاح! سيتم تحويلك الآن إلى الواتساب لإرسال إثبات الدفع.');
 
-                // 2. التوجيه الآمن والذكي للواتساب مع ترميز البيانات بالكامل
                 const whatsappMessage = encodeURIComponent(`مرحباً يا هندسة هاشم، لقد قمت بالتسجيل في الموسوعة باسم: ${fullName} ورقمي: ${phone} وهذا بريدي: ${email}. أرفق لك إثبات الدفع لتفعيل حسابي.`);
                 window.location.href = `https://wa.me/249998607716?text=${whatsappMessage}`;
 
             } catch (error) {
                 console.error('Supabase Error:', error);
                 
-                // رسائل خطأ تفصيلية بالعربية للمستخدم
                 let errorMsg = 'حدث خطأ أثناء التسجيل: ';
                 if (error.message && error.message.includes('already registered')) {
                     errorMsg += 'هذا البريد الإلكتروني مستخدم مسبقاً. يرجى استخدام بريد آخر أو تسجيل الدخول.';
@@ -237,7 +232,6 @@
                 
                 alert(errorMsg);
                 
-                // إعادة تفعيل الزر لتمكين المستخدم من تصحيح بياناته
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'إتمام التسجيل وإرسال إثبات الدفع';
             }
