@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل طالب جديد - هاشم فارمسي</title>
+    <title>تسجيل طالب جديد - موسوعة هاشم للمواد الخام</title>
     <style>
         body {
             font-family: Tahoma, sans-serif;
             background-color: #f4f7f6;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,43 +17,46 @@
         }
         .container {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 22px 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             width: 100%;
-            max-width: 450px;
+            max-width: 100%;
+            box-sizing: border-box;
             text-align: center;
         }
         .logo-section {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .logo-section h2 {
-            color: #333;
-            margin: 10px 0 5px 0;
-            font-size: 24px;
+            color: #222;
+            margin: 5px 0;
+            font-size: 26px;
+            font-weight: bold;
         }
         .logo-section p {
             color: #00897b;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             margin: 0;
         }
         .intro-box {
-            background-color: #f9fbfb;
+            background-color: #f2f9f9;
             border-right: 4px solid #00897b;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             text-align: right;
-            margin-bottom: 20px;
-            color: #444;
-            font-size: 14px;
-            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 15px;
+            line-height: 1.7;
+            font-weight: 500;
         }
         .slogan {
             font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 15px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 16px;
         }
         .form-group {
             margin-bottom: 15px;
@@ -61,66 +64,83 @@
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-size: 14px;
+            margin-bottom: 6px;
+            color: #333;
+            font-size: 15px;
+            font-weight: bold;
         }
         input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
             box-sizing: border-box;
             font-family: Tahoma, sans-serif;
+            font-size: 15px;
+            background-color: #fafafa;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            border-color: #00897b;
+            outline: none;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 137, 123, 0.2);
         }
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background-color: #25D366;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 17px;
             cursor: pointer;
             font-weight: bold;
             margin-top: 10px;
-            transition: background 0.3s;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #1ebe5d;
         }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
         .footer-text {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #777;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #666;
+            border-top: 1px solid #eaeaea;
+            padding-top: 12px;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- قسم الهوية والواجهة القديمة -->
+        <!-- قسم الهوية -->
         <div class="logo-section">
             <h2>هاشم فارمسي 💊</h2>
             <p>Hashim Pharmacy – Science & Results | علم ونتيجة</p>
         </div>
 
+        <!-- مقدمة احترافية -->
         <div class="intro-box">
-            مرحباً بك في هاشم فارمسي، منصتك المتخصصة في التركيبات الصيدلانية والتجميلية. 
-            هنا نضع بين يديك المعرفة العلمية، ونتعرف على المواد الخام وخصائصها ونسب استخدامها.
+            أهلاً بك في البوابة الحصرية لموسوعة هاشم للمواد الخام. وجهتك الأولى لاحتراف أسرار التركيبات الصيدلانية والتجميلية بأسس علمية دقيقة ومعتمدة.
         </div>
 
         <div class="slogan">
-            العلم أساس التركيب، والنتيجة عنوان النجاح.
+            ✨ العلم أساس التركيب، والنتيجة عنوان النجاح. ✨
         </div>
 
-        <!-- نموذج التسجيل الجديد والربط -->
+        <!-- نموذج التسجيل -->
         <form id="signupForm">
             <div class="form-group">
                 <label for="fullName">الاسم الكامل:</label>
-                <input type="text" id="fullName" required placeholder="أدخل اسمك الكامل">
+                <input type="text" id="fullName" required placeholder="أدخل اسمك الكامل الثلاثي">
             </div>
 
             <div class="form-group">
@@ -135,39 +155,50 @@
 
             <div class="form-group">
                 <label for="password">كلمة المرور:</label>
-                <input type="password" id="password" required placeholder="********">
+                <input type="password" id="password" required placeholder="******** (6 أحرف على الأقل)">
             </div>
 
-            <button type="submit">إتمام التسجيل وإرسال إثبات الدفع</button>
+            <button type="submit" id="submitBtn">إتمام التسجيل وإرسال إثبات الدفع</button>
         </form>
 
         <div class="footer-text">
-            أهلاً بك في عالم هاشم فارمسي.<br>
-            هاشم فارمسي – علم ونتيجة
+            نعتز بانضمامك إلى مجتمعنا العلمي المميز.<br>
+            <strong>هاشم فارمسي – علم ونتيجة</strong>
         </div>
     </div>
 
-    <!-- ربط مكتبة Supabase والتحكم بعملية التسجيل -->
+    <!-- ربط مكتبة Supabase والمنطق البرمجي الآمن -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        // بيانات مشروع Supabase
         const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
         const SUPABASE_ANON_KEY = 'Sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const form = document.getElementById('signupForm');
+        const submitBtn = document.getElementById('submitBtn');
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const fullName = document.getElementById('fullName').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
+            // التحقق من طول كلمة المرور
+            if (password.length < 6) {
+                alert('كلمة المرور يجب أن تكون 6 أحرف أو أرقام على الأقل.');
+                return;
+            }
+
+            // تعطيل الزر لمنع التكرار
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري إنشاء الحساب...';
+
             try {
-                // 1. تسجيل المستخدم في Supabase Auth
+                // 1. إرسال البيانات إلى Supabase Auth
                 const { data, error } = await supabase.auth.signUp({
                     email: email,
                     password: password,
@@ -183,13 +214,28 @@
 
                 alert('تم إنشاء الحساب بنجاح! سيتم تحويلك الآن إلى الواتساب لإرسال إثبات الدفع.');
 
-                // 2. التوجيه إلى رقم واتساب الخاص بك
+                // 2. التوجيه الآمن إلى الواتساب
                 const whatsappMessage = encodeURIComponent(`مرحباً يا هندسة هاشم، لقد قمت بالتسجيل في الموسوعة باسم: ${fullName} ورقمي: ${phone} وهذا بريدي: ${email}. أرفق لك إثبات الدفع لتفعيل حسابي.`);
                 window.location.href = `https://wa.me/249998607716?text=${whatsappMessage}`;
 
             } catch (error) {
-                alert('حدث خطأ أثناء التسجيل: ' + error.message);
-                console.error(error);
+                console.error('Supabase Error:', error);
+                
+                // رسائل خطأ واضحة للمستخدم بالعربية
+                let errorMsg = 'حدث خطأ أثناء التسجيل: ';
+                if (error.message.includes('already registered')) {
+                    errorMsg += 'هذا البريد الإلكتروني مستخدم مسبقاً. يرجى استخدام بريد آخر أو تسجيل الدخول.';
+                } else if (error.message.includes('Password should be')) {
+                    errorMsg += 'كلمة المرور ضعيفة، يرجى اختيار كلمة مرور أقوى.';
+                } else {
+                    errorMsg += error.message;
+                }
+                
+                alert(errorMsg);
+                
+                // اعادة تفعيل الزر في حال حدوث خطأ
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'إتمام التسجيل وإرسال إثبات الدفع';
             }
         });
     </script>
