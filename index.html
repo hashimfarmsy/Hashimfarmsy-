@@ -163,7 +163,7 @@
         </form>
 
         <div class="footer-links">
-            لديك حساب مسبق؟ <a href="#">تسجيل الدخول</a>
+            لديك حساب مسبق؟ <a href="login.html">تسجيل الدخول</a>
         </div>
 
         <div class="footer-text">
@@ -171,11 +171,11 @@
         </div>
     </div>
 
-    <!-- كود ربط التسجيل بقاعدة البيانات وتجاوز Rate Limit مع التحويل للواتساب -->
+    <!-- كود ربط التسجيل بالطريقة الرسمية والآمنة لـ Supabase Auth مع التحويل للواتساب -->
     <script>
-        const supabaseUrl = 'https://kbltufqozhxtpvbwyvji.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtibHR1ZnFvemh4dHB2Ynd5dmppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjc0MTYsImV4cCI6MjA1NTk0MzQxNn0.7Uf3Hk2Yv3kXj2Yv3kXj2Yv3kXj2Yv3kXj2Yv3kXj2Y';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function handleStudentSignup(event) {
             event.preventDefault();
@@ -185,11 +185,16 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
 
-            const { error } = await supabase.rpc('register_new_student', {
-                p_email: email,
-                p_password: password,
-                p_full_name: fullName,
-                p_phone: phone
+            // استخدام طريقة Supabase Auth الرسمية والآمنة مع تمرير الميتافيتا لتفعيل الـ Trigger
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                        phone: phone
+                    }
+                }
             });
 
             if (error) {
