@@ -99,6 +99,10 @@
         .btn-submit:hover {
             background-color: #00695c;
         }
+        .btn-submit:disabled {
+            background-color: #adb5bd;
+            cursor: not-allowed;
+        }
         .footer-links {
             text-align: center;
             margin-top: 15px;
@@ -134,10 +138,10 @@
         </div>
 
         <div class="tagline">
-            🧪 «نفهم المادة... لننتفن العلم والصناعة»
+            🧪 «نفهم المادة... لننتقن العلم والصناعة»
         </div>
 
-        <!-- نموذج التسجيل المطابق للواجهة الأصلية 100% -->
+        <!-- نموذج التسجيل بالواجهة الأصلية 100% -->
         <form id="signupForm" onsubmit="handleStudentSignup(event)">
             <div class="form-group">
                 <label>الاسم الكامل:</label>
@@ -159,7 +163,7 @@
                 <input type="password" id="password" placeholder="6 أحرف على الأقل" required>
             </div>
 
-            <button type="submit" class="btn-submit">إتمام التسجيل وإنشاء الحساب</button>
+            <button type="submit" id="submitBtn" class="btn-submit">إتمام التسجيل وإنشاء الحساب</button>
         </form>
 
         <div class="footer-links">
@@ -171,7 +175,7 @@
         </div>
     </div>
 
-    <!-- كود ربط التسجيل بالطريقة الرسمية والآمنة لـ Supabase Auth مع التحويل للواتساب -->
+    <!-- كود الربط الآمن والتوجيه للواتساب -->
     <script>
         const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
@@ -180,12 +184,16 @@
         async function handleStudentSignup(event) {
             event.preventDefault();
 
+            const submitBtn = document.getElementById('submitBtn');
             const fullName = document.getElementById('fullName').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
 
-            // استخدام طريقة Supabase Auth الرسمية والآمنة مع تمرير الميتافيتا لتفعيل الـ Trigger
+            // تعطيل الزر وتغيير النص أثناء المعالجة لمنع التكرار
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري حفظ بياناتك في النظام...';
+
             const { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
@@ -198,11 +206,14 @@
             });
 
             if (error) {
-                alert("حدث خطأ أثناء التسجيل: " + error.message);
+                alert("خطأ في التسجيل: " + error.message);
                 console.error("Supabase Error:", error);
+                // إعادة تفعيل الزر في حال حدوث خطأ
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'إتمام التسجيل وإنشاء الحساب';
             } else {
                 alert("تم إنشاء الحساب بنجاح! جاري تحويلك إلى الواتساب لتفعيل الحساب...");
-                window.location.href = "https://wa.me/249998607716?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%B0%20%D8%A3%D8%B3%D8%AA%D8%A7%D8%B0%20%D9%87%D8%A7%D8%B5%D9%85%D8%8C%20%D9%84%D9%82%D8%AF%20%D8%B3%D8%AC%D9%84%D8%AA%20%D9%84%D8%AA%D9%88%D9%8A%20%D9%81%D9%8A%20%D9%85%D9%86%D8%B5%D8%A9%20%D9%87%D8%A7%D8%B5%D9%85%20%D9%81%D8%A7%D8%B1%D9%85%D8%B3%D9%8A%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%AD%D8%B3%D8%A7%D8%B5%D9%8A.";
+                window.location.href = "https://wa.me/249998607716?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%B0%20%D8%A3%D8%B3%D8%AA%D8%A7%D8%B0%20%D9%87%D8%A7%D8%B5%D9%85%D8%8C%20%D9%84%D9%82%D8%AF%20%D8%B3%D8%AC%D9%84%D8%AA%20%D9%84%D8%AA%D9%88%D9%8A%20%D9%81%D9%8A%20%D9%85%D9%86%D8%B5%D8%A9%20%D9%87%D8%A7%D8%B5%D9%85%20%D9%81%D8%A7%D8%B1%D9%85%D8%B3%D9%8A%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%AD%D8%B3%D8%A7%D8%A8%D9%8A.";
             }
         }
     </script>
