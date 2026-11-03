@@ -28,6 +28,16 @@
             margin: 20px auto;
             padding: 0 15px;
         }
+        .error-banner {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ffcdd2;
+            font-size: 14px;
+            word-break: break-all;
+        }
         .search-box {
             margin-bottom: 25px;
         }
@@ -80,6 +90,8 @@
     </header>
 
     <div class="container">
+        <div id="errorContainer"></div>
+
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="ابحث في المواد الخام والأبواب الدراسية..." oninput="filterData()">
         </div>
@@ -106,9 +118,14 @@
 
         async function loadData() {
             try {
-                const { data: raw } = await supabase.from('raw_materials').select('*');
-                const { data: chapters } = await supabase.from('chapters').select('*').order('order_index', { ascending: true });
-                const { data: items } = await supabase.from('items').select('*');
+                const { data: raw, error: rawErr } = await supabase.from('raw_materials').select('*');
+                if (rawErr) throw new Error("خطأ في المواد الخام: " + rawErr.message);
+
+                const { data: chapters, error: chErr } = await supabase.from('chapters').select('*').order('order_index', { ascending: true });
+                if (chErr) throw new Error("خطأ في الأبواب: " + chErr.message);
+
+                const { data: items, error: itmErr } = await supabase.from('items').select('*');
+                if (itmErr) throw new Error("خطأ في العناصر: " + itmErr.message);
 
                 globalRaw = raw || [];
                 globalChapters = chapters || [];
@@ -116,12 +133,14 @@
 
                 render(globalRaw, globalChapters, globalItems);
             } catch (err) {
-                console.error("خطأ:", err);
+                console.error(err);
+                document.getElementById('errorContainer').innerHTML = `<div class="error-banner">⚠️ حدث خطأ تقني: ${err.message}</div>`;
+                document.getElementById('rawMaterialsContainer').innerHTML = `<p style="color:red;">فشل التحميل</p>`;
+                document.getElementById('chaptersContainer').innerHTML = `<p style="color:red;">فشل التحميل</p>`;
             }
         }
 
         function render(raw, chapters, items) {
-            // عرض المواد الخام
             const rawContainer = document.getElementById('rawMaterialsContainer');
             if (!raw || raw.length === 0) {
                 rawContainer.innerHTML = `<p style="color:#888;">لا توجد مواد خام مضافة.</p>`;
@@ -134,7 +153,6 @@
                 `).join('');
             }
 
-            // عرض الأبواب والمواد التابعة لها
             const chaptersContainer = document.getElementById('chaptersContainer');
             if (!chapters || chapters.length === 0) {
                 chaptersContainer.innerHTML = `<p style="color:#888;">لا توجد أبواب مضافة.</p>`;
