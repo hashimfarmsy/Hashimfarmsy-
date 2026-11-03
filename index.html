@@ -3,71 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة هاشم فارمسي - تسجيل الطلاب</title>
-    <!-- استدعاء مكتبة Supabase الرسمية -->
+    <title>تسجيل طالب جديد - موسوعة هاشم فارمسي</title>
+    <!-- استدعاء مكتبة Supabase رسمياً -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
-            background-color: #f4f7f6;
+            background-color: #f8f9fa;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-        }
-        .signup-container {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        h2 {
-            text-align: center;
             color: #333;
+        }
+        .container {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 420px;
+            box-sizing: border-box;
+        }
+        .header {
+            text-align: center;
             margin-bottom: 20px;
+        }
+        .header h2 {
+            font-size: 24px;
+            color: #111;
+            margin: 10px 0 5px 0;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: #00897b;
+            margin-bottom: 15px;
+        }
+        .welcome-box {
+            background-color: #e0f2f1;
+            border-right: 4px solid #00897b;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #263238;
+            margin-bottom: 15px;
+        }
+        .tagline {
+            background-color: #f1f3f5;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #495057;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #495057;
         }
         input {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
             box-sizing: border-box;
+            font-size: 14px;
+            background-color: #fff;
         }
-        button {
+        input:focus {
+            border-color: #00897b;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 137, 123, 0.2);
+        }
+        .btn-submit {
             width: 100%;
             padding: 12px;
-            background-color: #28a745;
+            background-color: #00897b;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
+            transition: background-color 0.2s;
         }
-        button:hover {
-            background-color: #218838;
+        .btn-submit:hover {
+            background-color: #00695c;
+        }
+        .footer-links {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        .footer-links a {
+            color: #00897b;
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #868e96;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
         }
     </style>
 </head>
 <body>
 
-    <div class="signup-container">
-        <h2>تسجيل طالب جديد</h2>
+    <div class="container">
+        <div class="header">
+            <h2>💊 هاشم فارمسي</h2>
+            <div class="subtitle">Hashim Pharmacy - Science & Results | علم ونتيجة</div>
+        </div>
+
+        <div class="welcome-box">
+            مرحباً بك في موسوعة هاشم للمواد الخام؛ مرجعك العلمي المتخصص لاكتشاف وفهم مواد التجميل والصناعات الصيدلانية، والتعمق في خصائصها وتركيبها الكيميائي واستخداماتها وتوافقها وفق أسس علمية مدروسة. هنا تتحول المعرفة إلى خبرة، والمعلومة إلى قدرة على الاختيار والتطبيق بثقة ووعي.
+        </div>
+
+        <div class="tagline">
+            🧪 «نفهم المادة... لننتفن العلم والصناعة»
+        </div>
+
+        <!-- نموذج التسجيل المطابق للواجهة الأصلية -->
         <form id="signupForm" onsubmit="handleStudentSignup(event)">
-            <input type="text" id="fullName" placeholder="الاسم الكامل" required>
-            <input type="email" id="email" placeholder="البريد الإلكتروني" required>
-            <input type="password" id="password" placeholder="كلمة المرور" required>
-            <input type="text" id="phone" placeholder="رقم الهاتف" required>
-            <button type="submit">تسجيل حساب جديد</button>
+            <div class="form-group">
+                <label>الاسم الكامل:</label>
+                <input type="text" id="fullName" placeholder="أدخل اسمك الثلاثي" required>
+            </div>
+
+            <div class="form-group">
+                <label>رقم الهاتف:</label>
+                <input type="text" id="phone" placeholder="09xxxxxxxx" required>
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني:</label>
+                <input type="email" id="email" placeholder="example@domain.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور:</label>
+                <input type="password" id="password" placeholder="6 أحرف على الأقل" required>
+            </div>
+
+            <button type="submit" class="btn-submit">إتمام التسجيل وإنشاء الحساب</button>
         </form>
+
+        <div class="footer-links">
+            لديك حساب مسبق؟ <a href="#">تسجيل الدخول</a>
+        </div>
+
+        <div class="footer-text">
+            نعتز بانضمامك إلى مجتمعنا العلمي المميز.<br>هاشم فارمسي - علم ونتيجة
+        </div>
     </div>
 
+    <!-- كود الجافاسكريبت المفحوص للربط مع Supabase وتجاوز Rate Limit -->
     <script>
-        // تهيئة الاتصال بـ Supabase
         const supabaseUrl = 'https://kbltufqozhxtpvbwyvji.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtibHR1ZnFvemh4dHB2Ynd5dmppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjc0MTYsImV4cCI6MjA1NTk0MzQxNn0.7Uf3Hk2Yv3kXj2Yv3kXj2Yv3kXj2Yv3kXj2Yv3kXj2Y';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -75,12 +180,11 @@
         async function handleStudentSignup(event) {
             event.preventDefault();
 
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
             const fullName = document.getElementById('fullName').value.trim();
             const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
 
-            // استدعاء دالة الـ RPC المسؤولة عن تجاوز Rate Limit والتسجيل الآمن
             const { error } = await supabase.rpc('register_new_student', {
                 p_email: email,
                 p_password: password,
@@ -92,8 +196,8 @@
                 alert("حدث خطأ أثناء التسجيل: " + error.message);
                 console.error("Supabase Error:", error);
             } else {
-                alert("تم إنشاء الحساب بنجاح! جاري تحويلك إلى الواتساب...");
-                window.location.href = "https://wa.me/249998607716?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%B0%20%D8%A3%D8%B3%D8%AA%D8%A7%D8%B0%20%D9%87%D8%A7%D8%B5%D9%85%D8%8C%20%D9%84%D9%82%D8%AF%20%D8%B3%D8%AC%D9%84%D8%AA%20%D9%84%D8%AA%D9%88%D9%8A%20%D9%81%D9%8A%20%D9%85%D9%86%D8%B5%D8%A9%20%D9%87%D8%A7%D8%B5%D9%85%20%D9%81%D8%A7%D8%B1%D9%85%D8%B3%D9%8A%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%20%D8%AD%D8%B3%D8%A7%D8%A8%D9%8A.";
+                alert("تم إنشاء الحساب بنجاح! جاري تحويلك إلى الواتساب لتفعيل الحساب...");
+                window.location.href = "https://wa.me/249998607716?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%B0%20%D8%A3%D8%B3%D8%AA%D8%A7%D8%B0%20%D9%87%D8%A7%D8%B5%D9%85%D8%8C%20%D9%84%D9%82%D8%AF%20%D8%B3%D8%AC%D9%84%D8%AA%20%D9%84%D8%AA%D9%88%D9%8A%20%D9%81%D9%8A%20%D9%85%D9%86%D8%B5%D8%A9%20%D9%87%D8%A7%D8%B5%D9%85%20%D9%81%D8%A7%D8%B1%D9%85%D8%B3%D9%8A%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%AD%D8%B3%D8%A7%D8%B5%D9%8A.";
             }
         }
     </script>
