@@ -25,9 +25,6 @@
             box-sizing: border-box;
             text-align: center;
         }
-        .logo-section {
-            margin-bottom: 15px;
-        }
         .logo-section h2 {
             color: #222;
             margin: 5px 0;
@@ -38,7 +35,7 @@
             color: #00897b;
             font-weight: bold;
             font-size: 13px;
-            margin: 0;
+            margin: 0 0 15px 0;
         }
         .intro-box {
             background-color: #f2f9f9;
@@ -48,7 +45,7 @@
             text-align: right;
             margin-bottom: 15px;
             color: #333;
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1.8;
             font-weight: 500;
         }
@@ -81,13 +78,11 @@
             font-family: Tahoma, sans-serif;
             font-size: 15px;
             background-color: #fafafa;
-            transition: all 0.3s ease;
         }
         input:focus {
             border-color: #00897b;
             outline: none;
             background-color: #fff;
-            box-shadow: 0 0 5px rgba(0, 137, 123, 0.2);
         }
         button {
             width: 100%;
@@ -100,24 +95,9 @@
             cursor: pointer;
             font-weight: bold;
             margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(0, 137, 123, 0.3);
-            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #00695c;
-        }
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .footer-text {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #666;
-            border-top: 1px solid #eaeaea;
-            padding-top: 12px;
-            line-height: 1.5;
         }
         .register-link {
             margin-top: 15px;
@@ -130,6 +110,13 @@
         }
         .register-link a:hover {
             text-decoration: underline;
+        }
+        .footer-text {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #666;
+            border-top: 1px solid #eaeaea;
+            padding-top: 12px;
         }
     </style>
 </head>
@@ -168,16 +155,18 @@
         </div>
 
         <div class="footer-text">
-            نعتز بانضمامك إلى مجتمعنا العلمي المميز.<br>
-            <strong>هاشم فارمسي – علم ونتيجة</strong>
+            نعتز بانضمامك إلى مجتمعنا العلمي المميز.<br>هاشم فارمسي – علم ونتيجة
         </div>
     </div>
 
+    <!-- استخدام أحدث إصدار من مكتبة سوبابيس ليتوافق تماماً مع المفاتيح الجديدة -->
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
         const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
-        const SUPABASE_ANON_KEY = 'Sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
+        
+        // الصق مفتاح الـ Publishable الجديد هنا (الذي يبدأ بـ sb_publishable_)
+        const SUPABASE_ANON_KEY = 'sb_publishable_الخاص بك هنا كاملاً';
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -194,6 +183,7 @@
             loginBtn.textContent = 'جاري التحقق من الحساب...';
 
             try {
+                // 1. تسجيل الدخول عبر Supabase Auth
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -201,18 +191,28 @@
 
                 if (error) throw error;
 
-                alert('تم تسجيل الدخول بنجاح! مرحباً بك في موسوعة هاشم.');
-                window.location.href = 'encyclopedia.html';
+                // 2. التحقق من حالة الموافقة (is_approved) في جدول profiles
+                const { data: profileData, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('is_approved')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (profileError) throw profileError;
+
+                if (profileData && profileData.is_approved === true) {
+                    alert('مرحباً بك! تم تسجيل الدخول بنجاح.');
+                    window.location.href = 'encyclopedia.html';
+                } else {
+                    alert('حسابك قيد المراجعة أو لم يتم الموافقة عليه بعد من الإدارة.');
+                    await supabase.auth.signOut();
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'تسجيل الدخول إلى الموسوعة';
+                }
 
             } catch (error) {
                 console.error('Login Error:', error);
-                let errorMsg = 'خطأ في تسجيل الدخول: ';
-                if (error.message.includes('Invalid login credentials')) {
-                    errorMsg += 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-                } else {
-                    errorMsg += error.message;
-                }
-                alert(errorMsg);
+                alert('خطأ في تسجيل الدخول: ' + error.message);
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'تسجيل الدخول إلى الموسوعة';
             }
