@@ -3,239 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل طالب جديد - موسوعة هاشم فارمسي</title>
-    <!-- استدعاء مكتبة Supabase رسمياً -->
+    <title>موسوعة هاشم فارمسي - المواد الخام والأبواب</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
             background-color: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
             color: #333;
         }
+        header {
+            background-color: #00897b;
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .admin-link {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .admin-link:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
         .container {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .search-box {
+            margin-bottom: 25px;
+        }
+        .search-box input {
             width: 100%;
-            max-width: 420px;
-            box-sizing: border-box;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .header h2 {
-            font-size: 24px;
-            color: #111;
-            margin: 10px 0 5px 0;
-        }
-        .subtitle {
-            font-size: 13px;
-            color: #00897b;
-            margin-bottom: 15px;
-        }
-        .welcome-box {
-            background-color: #e0f2f1;
-            border-right: 4px solid #00897b;
             padding: 12px 15px;
-            border-radius: 6px;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #263238;
-            margin-bottom: 15px;
-        }
-        .tagline {
-            background-color: #f1f3f5;
-            text-align: center;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #495057;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #495057;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
+            font-size: 16px;
             border: 1px solid #ced4da;
             border-radius: 8px;
             box-sizing: border-box;
-            font-size: 14px;
             background-color: #fff;
         }
-        input:focus {
-            border-color: #00897b;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 137, 123, 0.2);
-        }
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background-color: #00897b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.2s;
-        }
-        .btn-submit:hover {
-            background-color: #00695c;
-        }
-        .btn-submit:disabled {
-            background-color: #adb5bd;
-            cursor: not-allowed;
-        }
-        .footer-links {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-        }
-        .footer-links a {
+        .section-title {
             color: #00897b;
-            text-decoration: none;
+            border-bottom: 2px solid #00897b;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            font-size: 20px;
         }
-        .footer-links a:hover {
-            text-decoration: underline;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
-        .footer-text {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #868e96;
-            border-top: 1px solid #eee;
-            padding-top: 12px;
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            border-color: #00897b;
+        }
+        .card h3 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        .card p {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
+    <header>
+        <h1>موسوعة هاشم فارمسي (مفتوحة للجميع)</h1>
+        <a href="login.html" class="admin-link">دخول الإدارة</a>
+    </header>
+
     <div class="container">
-        <div class="header">
-            <h2>💊 هاشم فارمسي</h2>
-            <div class="subtitle">Hashim Pharmacy - Science & Results | علم ونتيجة</div>
+        <!-- شريط البحث السريع -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ابحث عن مادة خام، باب، أو عنصر دراسي..." oninput="filterData()">
         </div>
 
-        <div class="welcome-box">
-            مرحباً بك في موسوعة هاشم للمواد الخام؛ مرجعك العلمي المتخصص لاكتشاف وفهم مواد التجميل والصناعات الصيدلانية، والتعمق في خصائصها وتركيبها الكيميائي واستخداماتها وتوافقها وفق أسس علمية مدروسة. هنا تتحول المعرفة إلى خبرة، والمعلومة إلى قدرة على الاختيار والتطبيق بثقة ووعي.
+        <!-- قسم المواد الخام -->
+        <div class="section-title">🧪 المواد الخام (Raw Materials)</div>
+        <div id="rawMaterialsContainer" class="grid">
+            <p style="color: #666;">جاري تحميل المواد الخام...</p>
         </div>
 
-        <div class="tagline">
-            🧪 «نفهم المادة... لننتقن العلم والصناعة»
-        </div>
-
-        <!-- نموذج التسجيل -->
-        <form id="signupForm" onsubmit="handleStudentSignup(event)">
-            <div class="form-group">
-                <label>الاسم الكامل:</label>
-                <input type="text" id="fullName" placeholder="أدخل اسمك الثلاثي" required>
-            </div>
-
-            <div class="form-group">
-                <label>رقم الهاتف:</label>
-                <input type="text" id="phone" placeholder="09xxxxxxxx" required>
-            </div>
-
-            <div class="form-group">
-                <label>البريد الإلكتروني:</label>
-                <input type="email" id="email" placeholder="example@domain.com" required>
-            </div>
-
-            <div class="form-group">
-                <label>كلمة المرور:</label>
-                <input type="password" id="password" placeholder="6 أحرف على الأقل" required>
-            </div>
-
-            <button type="submit" id="submitBtn" class="btn-submit">تسجيل والدخول للموسوعة</button>
-        </form>
-
-        <div class="footer-links">
-            لديك حساب مسبق؟ <a href="login.html">تسجيل الدخول</a>
-        </div>
-
-        <div class="footer-text">
-            نعتز بانضمامك إلى مجتمعنا العلمي المميز.<br>هاشم فارمسي - علم ونتيجة
+        <!-- قسم الأبواب والمواد الدراسية -->
+        <div class="section-title">📚 الأبواب والمواد الدراسية</div>
+        <div id="chaptersContainer" style="margin-top: 15px;">
+            <p style="color: #666;">جاري تحميل الأبواب...</p>
         </div>
     </div>
 
-    <!-- كود الربط والتوجيه التلقائي -->
     <script>
         const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // التحقق من الجلسة لمنع العودة لصفحة التسجيل إذا كان مسجلاً
-        async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                window.location.href = "materials.html"; // صفحة المواد الخاصة بك
-            }
+        let globalRawMaterials = [];
+        let globalChapters = [];
+        let globalItems = [];
+
+        async function loadAllData() {
+            // 1. جلب المواد الخام
+            const { data: rawMaterials, error: rawError } = await supabase
+                .from('raw_materials')
+                .select('*');
+
+            // 2. جلب الأبواب والمواد
+            const { data: chapters } = await supabase.from('chapters').select('*').order('order_index');
+            const { data: items } = await supabase.from('items').select('*');
+
+            globalRawMaterials = rawMaterials || [];
+            globalChapters = chapters || [];
+            globalItems = items || [];
+
+            renderData(globalRawMaterials, globalChapters, globalItems);
         }
-        checkSession();
 
-        async function handleStudentSignup(event) {
-            event.preventDefault();
-
-            const submitBtn = document.getElementById('submitBtn');
-            const fullName = document.getElementById('fullName').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري إنشاء الحساب والدخول...';
-
-            // تسجيل الحساب مع تمرير كلمة المرور في الـ metadata لتخزينها في الجدول
-            const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: password,
-                options: {
-                    data: {
-                        full_name: fullName,
-                        phone: phone,
-                        password: password
-                    }
-                }
-            });
-
-            if (error) {
-                alert("خطأ في التسجيل: " + error.message);
-                console.error("Supabase Error:", error);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'تسجيل والدخول للموسوعة';
+        function renderData(rawMaterials, chapters, items) {
+            // عرض المواد الخام
+            const rawContainer = document.getElementById('rawMaterialsContainer');
+            if (rawMaterials.length === 0) {
+                rawContainer.innerHTML = `<p style="color: #888;">لا توجد مواد خام مضافة حالياً.</p>`;
             } else {
-                // تسجيل الدخول البرمجي الفوري لضمان حفظ الجلسة
-                const { error: loginError } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (loginError) {
-                    alert("تم التسجيل بنجاح، يرجى تسجيل الدخول.");
-                    window.location.href = "login.html";
-                } else {
-                    // الانتقال الفوري لواجهة المواد
-                    window.location.href = "materials.html";
-                }
+                rawContainer.innerHTML = rawMaterials.map(item => `
+                    <div class="card">
+                        <h3>${item.name || 'بدون اسم'}</h3>
+                        <p>${item.description || 'لا توجد تفاصيل...'}</p>
+                    </div>
+                `).join('');
             }
+
+            // عرض الأبواب والمواد
+            const chaptersContainer = document.getElementById('chaptersContainer');
+            if (chapters.length === 0) {
+                chaptersContainer.innerHTML = `<p style="color: #888;">لا توجد أبواب مضافة حالياً.</p>`;
+                return;
+            }
+
+            chaptersContainer.innerHTML = chapters.map(chapter => {
+                const chapterItems = items.filter(i => i.chapter_id === chapter.id);
+                const itemsHtml = chapterItems.length > 0 ? 
+                    `<div class="grid" style="margin-top:10px;">` + 
+                    chapterItems.map(i => `
+                        <div class="card" style="background:#f8f9fa;">
+                            <h3>${i.name_ar || i.name_en || 'مادة'}</h3>
+                            <p>${i.details ? i.details.substring(0, 70) + '...' : 'لا توجد تفاصيل'}</p>
+                        </div>
+                    `).join('') + `</div>` 
+                    : `<p style="font-size:13px; color:#888;">لا توجد مواد تحت هذا الباب.</p>`;
+
+                return `
+                    <div style="background:white; padding:15px; border-radius:8px; margin-bottom:15px; border-right:4px solid #00897b; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+                        <h3 style="color:#00897b; margin-top:0;">${chapter.title_ar || chapter.title_en || 'باب'}</h3>
+                        ${itemsHtml}
+                    </div>
+                `;
+            }).join('');
         }
+
+        function filterData() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (!query) {
+                renderData(globalRawMaterials, globalChapters, globalItems);
+                return;
+            }
+
+            const filteredRaw = globalRawMaterials.filter(r => 
+                (r.name || '').toLowerCase().includes(query) || (r.description || '').toLowerCase().includes(query)
+            );
+
+            const filteredItems = globalItems.filter(i => 
+                (i.name_ar || '').toLowerCase().includes(query) || (i.name_en || '').toLowerCase().includes(query) || (i.details || '').toLowerCase().includes(query)
+            );
+
+            const matchedChapterIds = new Set(filteredItems.map(i => i.chapter_id));
+            const filteredChapters = globalChapters.filter(ch => 
+                matchedChapterIds.has(ch.id) || (ch.title_ar || '').toLowerCase().includes(query)
+            );
+
+            renderData(filteredRaw, filteredChapters, filteredItems);
+        }
+
+        loadAllData();
     </script>
 </body>
 </html>
