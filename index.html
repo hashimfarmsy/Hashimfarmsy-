@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موسوعة هاشم فارمسي - المحتوى العلمي والمواد الخام</title>
+    <title>موسوعة هاشم فارمسي - المحتوى العلمي والأبواب</title>
     <!-- استدعاء مكتبة Supabase رسمياً -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -13,7 +13,6 @@
             margin: 0;
             color: #333;
         }
-        /* تنسيق صفحة التسجيل */
         #auth-container {
             display: flex;
             justify-content: center;
@@ -92,7 +91,6 @@
             background-color: #00695c;
         }
 
-        /* تنسيق واجهة التطبيق والمحتوى (تظهر بعد التسجيل) */
         #app-container {
             display: none;
             padding: 20px;
@@ -144,7 +142,7 @@
             </div>
 
             <div class="welcome-box">
-                مرحباً بك في موسوعة هاشم للمواد الخام. أدخل بياناتك للانتقال الفوري إلى الأبواب والمحتوى العلمي.
+                مرحباً بك في موسوعة هاشم للمواد الخام. أدخل بياناتك للانتقال الفوري إلى المحتوى والأبواب.
             </div>
 
             <form id="signupForm" onsubmit="handleStudentSignup(event)">
@@ -169,7 +167,7 @@
         </div>
     </div>
 
-    <!-- 2. واجهة التطبيق وعرض المواد والأبواب -->
+    <!-- 2. واجهة التطبيق وعرض الأبواب والمواد -->
     <div id="app-container">
         <div class="app-header">
             <div>
@@ -179,28 +177,26 @@
             <button onclick="logout()" style="background: #d32f2f; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer;">تسجيل خروج</button>
         </div>
 
-        <h3 style="color: #333; margin-bottom: 15px;">قائمة الأبواب والمواد (24 باباً):</h3>
+        <h3 style="color: #333; margin-bottom: 15px;">قائمة الأبواب والمواد:</h3>
         <div id="materialsList" class="materials-grid">
-            <p>جاري تحميل المواد والأبواب من قاعدة البيانات...</p>
+            <p>جاري تحميل الأبواب والمواد...</p>
         </div>
     </div>
 
-    <!-- كود الربط وجلب البيانات -->
     <script>
         const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // التحقق من الجلسة عند الفتح
+        // التحقق الفوري من وجود جلسة نشطة عند فتح الصفحة
         async function checkSession() {
             const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
+            if (session && session.user) {
                 showApp(session.user);
             }
         }
         checkSession();
 
-        // دالة التسجيل
         async function handleStudentSignup(event) {
             event.preventDefault();
 
@@ -211,8 +207,9 @@
             const password = document.getElementById('password').value.trim();
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري التسجيل ودخول الموسوعة...';
+            submitBtn.textContent = 'جاري التسجيل وحفظ البيانات...';
 
+            // 1. تنفيذ التسجيل في سوبابيس مع تمرير البيانات للـ Trigger
             const { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
@@ -230,57 +227,59 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'تسجيل ودخول للموسوعة';
             } else {
+                // 2. تسجيل الدخول البرمجي مباشرة لضمان تفعيل الجلسة
                 const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
 
                 if (loginError) {
-                    alert("تم التسجيل بنجاح، يرجى تسجيل الدخول.");
+                    // إذا تطلب الأمر تسجيل دخول يدوي في حال فشل التوثيق التلقائي
+                    alert("تم حفظ بياناتك في الإدارة بنجاح! يرجى تسجيل الدخول.");
+                    window.location.href = "login.html";
                 } else {
+                    // 3. الانتقال الفوري لواجهة التطبيق دون إعادة تحميل الصفحة
                     showApp(loginData.user);
                 }
             }
         }
 
-        // إظهار واجهة التطبيق وجلب الأبواب والمواد من سوبابيس
+        // دالة عرض التطبيق وجلب الأبواب من جدول materials
         async function showApp(user) {
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
             document.getElementById('welcomeUser').textContent = "مرحباً بك، " + (user.user_metadata?.full_name || user.email);
 
-            // جلب الأبواب والمواد من جدول المواد في سوبابيس (تأكد أن اسم الجدول لديك هو materials أو حدس الاسم المناسب)
+            // جلب البيانات من جدول materials في سوبابيس
             const { data: materials, error } = await supabase
-                .from('materials') // اسم جدول المواد في قاعدة بياناتك
+                .from('materials')
                 .select('*');
 
             const container = document.getElementById('materialsList');
             container.innerHTML = '';
 
             if (error) {
-                container.innerHTML = `<p style="color: red;">تعسّر تحميل الأبواب: تأكد من اسم جدول المواد في قاعدة البيانات.</p>`;
-                console.error("Error fetching materials:", error);
+                container.innerHTML = `<p style="color: red;">تعسّر تحميل الأبواب، تأكد من جدول materials في سوبابيس.</p>`;
+                console.error(error);
                 return;
             }
 
             if (!materials || materials.length === 0) {
-                container.innerHTML = `<p>لا توجد مواد مضافة حالياً في قاعدة البيانات.</p>`;
+                container.innerHTML = `<p>لا توجد مواد مضافة في القائمة حالياً.</p>`;
                 return;
             }
 
-            // عرض الأبواب والمواد ديناميكياً
             materials.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'material-card';
                 card.innerHTML = `
                     <h3>${item.title || item.name || 'باب علمي'}</h3>
-                    <p>${item.description || item.content || 'التفاصيل والخصائص العلمية للمادة الخام...'}</p>
+                    <p>${item.description || item.content || 'التفاصيل والخصائص العلمية...'}</p>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // تسجيل الخروج
         async function logout() {
             await supabase.auth.signOut();
             location.reload();
