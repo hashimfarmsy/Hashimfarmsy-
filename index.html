@@ -1,241 +1,29 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل طالب جديد - موسوعة هاشم للمواد الخام</title>
-    <style>
-        body {
-            font-family: Tahoma, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 22px 16px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .logo-section h2 {
-            color: #222;
-            margin: 5px 0;
-            font-size: 26px;
-            font-weight: bold;
-        }
-        .logo-section p {
-            color: #00897b;
-            font-weight: bold;
-            font-size: 13px;
-            margin: 0 0 15px 0;
-        }
-        .intro-box {
-            background-color: #f2f9f9;
-            border-right: 4px solid #00897b;
-            padding: 14px;
-            border-radius: 8px;
-            text-align: right;
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 14px;
-            line-height: 1.8;
-            font-weight: 500;
-        }
-        .slogan {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 16px;
-            background: #eef2f3;
-            padding: 10px;
-            border-radius: 6px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-            text-align: right;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            color: #333;
-            font-size: 15px;
-            font-weight: bold;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #bdc3c7;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: Tahoma, sans-serif;
-            font-size: 15px;
-            background-color: #fafafa;
-        }
-        input:focus {
-            border-color: #00897b;
-            outline: none;
-            background-color: #fff;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #00897b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 17px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #00695c;
-        }
-        .login-link {
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .login-link a {
-            color: #00897b;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-        .footer-text {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #666;
-            border-top: 1px solid #eaeaea;
-            padding-top: 12px;
-        }
-    </style>
-</head>
-<body>
+// كود تسجيل الطالب الشامل والجاهز لمنصة هاشم فارمسي
+async function handleStudentSignup(event) {
+    event.preventDefault();
 
-    <div class="container">
-        <div class="logo-section">
-            <h2>هاشم فارمسي 💊</h2>
-            <p>Hashim Pharmacy – Science & Results | علم ونتيجة</p>
-        </div>
+    // 1. جلب البيانات من الحقول في واجهة المستخدم
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const fullName = document.getElementById('fullName').value.trim();
+    const phone = document.getElementById('phone').value.trim();
 
-        <div class="intro-box">
-            مرحباً بك في موسوعة هاشم للمواد الخام؛ مرجعك العلمي المتخصص لاكتشاف وفهم مواد التجميل والصناعات الصيدلانية، والتعمّق في خصائصها وتركيبها الكيميائي واستخداماتها وتوافقها وفق أسس علمية مدروسة.
-        </div>
+    // 2. استدعاء دالة SQL البرمجية التي أنشأناها لتخطي قيود الـ Rate Limit
+    const { error } = await supabase.rpc('register_new_student', {
+        p_email: email,
+        p_password: password,
+        p_full_name: fullName,
+        p_phone: phone
+    });
 
-        <div class="slogan">
-            🧪 «نفهم المادة… لنتقن العلم والصناعة»
-        </div>
-
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="fullName">الاسم الكامل:</label>
-                <input type="text" id="fullName" required placeholder="أدخل اسمك الثلاثي">
-            </div>
-
-            <div class="form-group">
-                <label for="phone">رقم الهاتف:</label>
-                <input type="tel" id="phone" required placeholder="09xxxxxxxx">
-            </div>
-
-            <div class="form-group">
-                <label for="email">البريد الإلكتروني:</label>
-                <input type="email" id="email" required placeholder="example@domain.com">
-            </div>
-
-            <div class="form-group">
-                <label for="password">كلمة المرور:</label>
-                <input type="password" id="password" required placeholder="6 أحرف على الأقل">
-            </div>
-
-            <button type="submit" id="regBtn">إتمام التسجيل وإرسال إثبات الدفع</button>
-        </form>
-
-        <div class="login-link">
-            لديك حساب مسبق؟ <a href="login.html">تسجيل الدخول</a>
-        </div>
-
-        <div class="footer-text">
-            هاشم فارمسي – علم ونتيجة
-        </div>
-    </div>
-
-    <script type="module">
-        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
-
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        const form = document.getElementById('registerForm');
-        const regBtn = document.getElementById('regBtn');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const fullName = document.getElementById('fullName').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            regBtn.disabled = true;
-            regBtn.textContent = 'جاري حفظ بياناتك في النظام...';
-
-            try {
-                // 1. إنشاء الحساب في نظام المصادقة
-                const { data: authData, error: authError } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            full_name: fullName,
-                            phone: phone
-                        }
-                    }
-                });
-
-                if (authError) throw authError;
-
-                const userId = authData.user ? authData.user.id : null;
-
-                if (userId) {
-                    // 2. استدعاء الدالة الآمنة لإدراج السجل في profiles دون مشاكل RLS
-                    const { error: rpcError } = await supabase.rpc('handle_new_student_signup', {
-                        user_id: userId,
-                        user_full_name: fullName,
-                        user_phone: phone
-                    });
-
-                    if (rpcError) throw rpcError;
-                }
-
-                // 3. توجيه الطالب للواتساب برسالة جاهزة
-                const myWhatsAppNumber = '249998607716';
-                const whatsappMessage = `السلام عليكم إدارة هاشم فارمسي، لقد قمت بالتسجيل في الموسوعة باسم (${fullName}) ورقم الهاتف (${phone}). أرجو مراجعة حسابي وتأكيد الاشتراك.`;
-
-                const encodedMessage = encodeURIComponent(whatsappMessage);
-                const whatsappURL = `https://wa.me/${myWhatsAppNumber}?text=${encodedMessage}`;
-
-                alert('تم تسجيل حسابك وحفظ بياناتك في لوحة الإدارة بنجاح! سيتم تحويلك الآن عبر الواتساب لمتابعة تأكيد الدفع.');
-                window.location.href = whatsappURL;
-
-            } catch (error) {
-                console.error('Registration Error:', error);
-                alert('خطأ في التسجيل: ' + error.message);
-                regBtn.disabled = false;
-                regBtn.textContent = 'إتمام التسجيل وإرسال إثبات الدفع';
-            }
-        });
-    </script>
-</body>
-</html>
+    // 3. التحقق من نجاح أو فشل عملية التسجيل
+    if (error) {
+        alert("حدث خطأ أثناء التسجيل: " + error.message);
+        console.error(error);
+    } else {
+        alert("تم إنشاء الحساب بنجاح! جاري تحويلك إلى الواتساب...");
+        
+        // 4. التوجيه المباشر إلى رقم واتساب الخاص بك مع رسالة جاهزة
+        window.location.href = "https://wa.me/249998607716?text=مرحباً%20أستاذ%20هاشم،%20لقد%20سجلت%20لتوّي%20في%20منصة%20هاشم%20فارمسي%20وأريد%20تفعيل%20حسابي.";
+    }
+}
