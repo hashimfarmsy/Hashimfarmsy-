@@ -1,14 +1,11 @@
-// كود تسجيل الطالب الشامل والجاهز لمنصة هاشم فارمسي
 async function handleStudentSignup(event) {
     event.preventDefault();
 
-    // 1. جلب البيانات من الحقول في واجهة المستخدم
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
     const fullName = document.getElementById('fullName').value.trim();
     const phone = document.getElementById('phone').value.trim();
 
-    // 2. استدعاء دالة SQL البرمجية التي أنشأناها لتخطي قيود الـ Rate Limit
     const { error } = await supabase.rpc('register_new_student', {
         p_email: email,
         p_password: password,
@@ -16,14 +13,11 @@ async function handleStudentSignup(event) {
         p_phone: phone
     });
 
-    // 3. التحقق من نجاح أو فشل عملية التسجيل
     if (error) {
         alert("حدث خطأ أثناء التسجيل: " + error.message);
         console.error(error);
     } else {
         alert("تم إنشاء الحساب بنجاح! جاري تحويلك إلى الواتساب...");
-        
-        // 4. التوجيه المباشر إلى رقم واتساب الخاص بك مع رسالة جاهزة
-        window.location.href = "https://wa.me/249998607716?text=مرحباً%20أستاذ%20هاشم،%20لقد%20سجلت%20لتوّي%20في%20منصة%20هاشم%20فارمسي%20وأريد%20تفعيل%20حسابي.";
+        window.location.href = "https://wa.me/249998607716?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D8%A3%D8%B3%D8%AA%D8%A7%D8%B0%20%D9%87%D8%A7%D8%B4%D9%85%D8%8C%20%D9%84%D9%82%D8%AF%20%D8%B3%D8%AC%D9%84%D8%AA%20%D9%84%D8%AA%D9%88%D9%8A%20%D9%81%D9%8A%20%D9%85%D9%86%D8%B5%D8%A9%20%D9%87%D8%A7%D8%B4%D9%85%20%D9%81%D8%A7%D8%B1%D9%85%D8%B3%D9%8A%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%AD%D8%B3%D8%A7%D8%A8%D9%8A.";
     }
 }
