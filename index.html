@@ -16,14 +16,12 @@
             background-color: #00897b;
             color: white;
             padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         header h1 {
             margin: 0;
-            font-size: 18px;
+            font-size: 20px;
         }
         .container {
             max-width: 1100px;
@@ -47,7 +45,7 @@
             border-bottom: 2px solid #00897b;
             padding-bottom: 5px;
             margin-top: 30px;
-            font-size: 20px;
+            font-size: 18px;
         }
         .grid {
             display: grid;
@@ -78,22 +76,22 @@
 <body>
 
     <header>
-        <h1>موسوعة هاشم فارمسي</h1>
+        <h1>موسوعة هاشم فارمسي للمواد والتجميل</h1>
     </header>
 
     <div class="container">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="ابحث في الموسوعة والمواد الخام..." oninput="filterData()">
+            <input type="text" id="searchInput" placeholder="ابحث في المواد الخام والأبواب الدراسية..." oninput="filterData()">
         </div>
 
         <div class="section-title">🧪 المواد الخام (Raw Materials)</div>
         <div id="rawMaterialsContainer" class="grid">
-            <p style="color: #666;">جاري التحميل...</p>
+            <p style="color: #666;">جاري تحميل المواد الخام...</p>
         </div>
 
         <div class="section-title">📚 الأبواب والمواد الدراسية</div>
         <div id="chaptersContainer" style="margin-top: 15px;">
-            <p style="color: #666;">جاري التحميل...</p>
+            <p style="color: #666;">جاري تحميل الأبواب...</p>
         </div>
     </div>
 
@@ -108,9 +106,9 @@
 
         async function loadData() {
             try {
-                const { data: raw } = await supabase.from('raw_materials').select('*');
-                const { data: chapters } = await supabase.from('chapters').select('*').order('order_index');
-                const { data: items } = await supabase.from('items').select('*');
+                const { data: raw, error: rawErr } = await supabase.from('raw_materials').select('*');
+                const { data: chapters, error: chErr } = await supabase.from('chapters').select('*');
+                const { data: items, error: itmErr } = await supabase.from('items').select('*');
 
                 globalRaw = raw || [];
                 globalChapters = chapters || [];
@@ -118,26 +116,26 @@
 
                 render(globalRaw, globalChapters, globalItems);
             } catch (err) {
-                console.error(err);
+                console.error("خطأ في الاتصال:", err);
             }
         }
 
         function render(raw, chapters, items) {
             const rawContainer = document.getElementById('rawMaterialsContainer');
             if (!raw || raw.length === 0) {
-                rawContainer.innerHTML = `<p style="color:#888;">لا توجد مواد خام مضافة.</p>`;
+                rawContainer.innerHTML = `<p style="color:#888;">لا توجد مواد خام مضافة حالياً.</p>`;
             } else {
                 rawContainer.innerHTML = raw.map(r => `
                     <div class="card">
-                        <h3>${r.name || 'بدون اسم'}</h3>
-                        <p>${r.description || 'لا توجد تفاصيل'}</p>
+                        <h3>${r.name || r.title || 'بدون اسم'}</h3>
+                        <p>${r.description || r.details || 'لا توجد تفاصيل'}</p>
                     </div>
                 `).join('');
             }
 
             const chaptersContainer = document.getElementById('chaptersContainer');
             if (!chapters || chapters.length === 0) {
-                chaptersContainer.innerHTML = `<p style="color:#888;">لا توجد أبواب مضافة.</p>`;
+                chaptersContainer.innerHTML = `<p style="color:#888;">لا توجد أبواب مضافة حالياً.</p>`;
                 return;
             }
 
@@ -147,15 +145,15 @@
                     `<div class="grid" style="margin-top:10px;">` + 
                     chItems.map(i => `
                         <div class="card" style="background:#f8f9fa;">
-                            <h3>${i.name_ar || i.name_en || 'مادة'}</h3>
-                            <p>${i.details ? i.details.substring(0, 70) + '...' : 'لا توجد تفاصيل'}</p>
+                            <h3>${i.name_ar || i.name_en || i.name || 'مادة'}</h3>
+                            <p>${i.details || i.description ? (i.details || i.description) : 'لا توجد تفاصيل'}</p>
                         </div>
                     `).join('') + `</div>` 
                     : `<p style="font-size:13px; color:#888;">لا توجد مواد تحت هذا الباب.</p>`;
 
                 return `
                     <div style="background:white; padding:15px; border-radius:8px; margin-bottom:15px; border-right:4px solid #00897b; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                        <h3 style="color:#00897b; margin-top:0;">${ch.title_ar || ch.title_en || 'باب'}</h3>
+                        <h3 style="color:#00897b; margin-top:0;">${ch.title_ar || ch.title_en || ch.name || 'باب'}</h3>
                         ${itemsHtml}
                     </div>
                 `;
