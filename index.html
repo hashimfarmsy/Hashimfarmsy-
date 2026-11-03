@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - موسوعة هاشم للمواد الخام</title>
+    <title>تسجيل طالب جديد - موسوعة هاشم للمواد الخام</title>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -99,16 +99,16 @@
         button:hover {
             background-color: #00695c;
         }
-        .register-link {
+        .login-link {
             margin-top: 15px;
             font-size: 14px;
         }
-        .register-link a {
+        .login-link a {
             color: #00897b;
             text-decoration: none;
             font-weight: bold;
         }
-        .register-link a:hover {
+        .login-link a:hover {
             text-decoration: underline;
         }
         .footer-text {
@@ -129,14 +129,24 @@
         </div>
 
         <div class="intro-box">
-            مرحباً بك مجدداً في بوابة تسجيل دخول طلاب موسوعة هاشم للمواد الخام. يرجى إدخال بيانات حسابك المعتمد لاستعراض محتوى الموسوعة.
+            مرحباً بك في موسوعة هاشم للمواد الخام؛ مرجعك العلمي المتخصص لاكتشاف وفهم مواد التجميل والصناعات الصيدلانية، والتعمّق في خصائصها وتركيبها الكيميائي واستخداماتها وتوافقها وفق أسس علمية مدروسة. هنا تتحول المعرفة إلى خبرة، والمعلومة إلى قدرة على الاختيار والتطبيق بثقة ووعي.
         </div>
 
         <div class="slogan">
             🧪 «نفهم المادة… لنتقن العلم والصناعة»
         </div>
 
-        <form id="loginForm">
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="fullName">الاسم الكامل:</label>
+                <input type="text" id="fullName" required placeholder="أدخل اسمك الثلاثي">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">رقم الهاتف:</label>
+                <input type="tel" id="phone" required placeholder="09xxxxxxxx">
+            </div>
+
             <div class="form-group">
                 <label for="email">البريد الإلكتروني:</label>
                 <input type="email" id="email" required placeholder="example@domain.com">
@@ -144,77 +154,88 @@
 
             <div class="form-group">
                 <label for="password">كلمة المرور:</label>
-                <input type="password" id="password" required placeholder="********">
+                <input type="password" id="password" required placeholder="6 أحرف على الأقل">
             </div>
 
-            <button type="submit" id="loginBtn">تسجيل الدخول إلى الموسوعة</button>
+            <button type="submit" id="regBtn">إتمام التسجيل وإرسال إثبات الدفع</button>
         </form>
 
-        <div class="register-link">
-            ليس لديك حساب؟ <a href="index.html">سجل الآن</a>
+        <div class="login-link">
+            لديك حساب مسبق؟ <a href="login.html">تسجيل الدخول</a>
         </div>
 
         <div class="footer-text">
-            نعتز بانضمامك إلى مجتمعنا العلمي المميز.<br>هاشم فارمسي – علم ونتيجة
+            هاشم فارمسي – علم ونتيجة
         </div>
     </div>
 
-    <!-- استخدام أحدث إصدار من مكتبة سوبابيس ليتوافق تماماً مع المفاتيح الجديدة -->
     <script type="module">
         import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
         const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
-        
-        // الصق مفتاح الـ Publishable الجديد هنا (الذي يبدأ بـ sb_publishable_)
-        const SUPABASE_ANON_KEY = 'sb_publishable_الخاص بك هنا كاملاً';
+        const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const form = document.getElementById('loginForm');
-        const loginBtn = document.getElementById('loginBtn');
+        const form = document.getElementById('registerForm');
+        const regBtn = document.getElementById('regBtn');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            loginBtn.disabled = true;
-            loginBtn.textContent = 'جاري التحقق من الحساب...';
+            regBtn.disabled = true;
+            regBtn.textContent = 'جاري حفظ بياناتك في النظام...';
 
             try {
-                // 1. تسجيل الدخول عبر Supabase Auth
-                const { data, error } = await supabase.auth.signInWithPassword({
+                // 1. إنشاء الحساب في نظام المصادقة
+                const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: email,
-                    password: password
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullName,
+                            phone: phone
+                        }
+                    }
                 });
 
-                if (error) throw error;
+                if (authError) throw authError;
 
-                // 2. التحقق من حالة الموافقة (is_approved) في جدول profiles
-                const { data: profileData, error: profileError } = await supabase
+                // 2. إدخال البيانات في جدول profiles
+                const { error: dbError } = await supabase
                     .from('profiles')
-                    .select('is_approved')
-                    .eq('id', data.user.id)
-                    .single();
+                    .insert([
+                        { 
+                            id: authData.user.id,
+                            full_name: fullName, 
+                            phone: phone, 
+                            role: 'student',
+                            is_approved: false
+                        }
+                    ]);
 
-                if (profileError) throw profileError;
+                if (dbError) throw dbError;
 
-                if (profileData && profileData.is_approved === true) {
-                    alert('مرحباً بك! تم تسجيل الدخول بنجاح.');
-                    window.location.href = 'encyclopedia.html';
-                } else {
-                    alert('حسابك قيد المراجعة أو لم يتم الموافقة عليه بعد من الإدارة.');
-                    await supabase.auth.signOut();
-                    loginBtn.disabled = false;
-                    loginBtn.textContent = 'تسجيل الدخول إلى الموسوعة';
-                }
+                // 3. توجيه الطالب للواتساب
+                const myWhatsAppNumber = '249998607716';
+                const whatsappMessage = `السلام عليكم إدارة هاشم فارمسي، لقد قمت بالتسجيل في الموسوعة باسم (${fullName}) ورقم الهاتف (${phone}). أرجو مراجعة حسابي وتأكيد الاشتراك.`;
+
+                const encodedMessage = encodeURIComponent(whatsappMessage);
+                const whatsappURL = `https://wa.me/${myWhatsAppNumber}?text=$encodedMessage`;
+
+                alert('تم تسجيل حسابك وحفظ بياناتك في لوحة الإدارة بنجاح! سيتم تحويلك الآن عبر الواتساب لمتابعة تأكيد الدفع.');
+                window.location.href = `https://wa.me/${myWhatsAppNumber}?text=${encodedMessage}`;
 
             } catch (error) {
-                console.error('Login Error:', error);
-                alert('خطأ في تسجيل الدخول: ' + error.message);
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'تسجيل الدخول إلى الموسوعة';
+                console.error('Registration Error:', error);
+                alert('خطأ في التسجيل: ' + error.message);
+                regBtn.disabled = false;
+                regBtn.textContent = 'إتمام التسجيل وإرسال إثبات الدفع';
             }
         });
     </script>
