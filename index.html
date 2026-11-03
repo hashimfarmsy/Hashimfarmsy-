@@ -106,9 +106,9 @@
 
         async function loadData() {
             try {
-                const { data: raw, error: rawErr } = await supabase.from('raw_materials').select('*');
-                const { data: chapters, error: chErr } = await supabase.from('chapters').select('*');
-                const { data: items, error: itmErr } = await supabase.from('items').select('*');
+                const { data: raw } = await supabase.from('raw_materials').select('*');
+                const { data: chapters } = await supabase.from('chapters').select('*').order('order_index', { ascending: true });
+                const { data: items } = await supabase.from('items').select('*');
 
                 globalRaw = raw || [];
                 globalChapters = chapters || [];
@@ -116,26 +116,28 @@
 
                 render(globalRaw, globalChapters, globalItems);
             } catch (err) {
-                console.error("خطأ في الاتصال:", err);
+                console.error("خطأ:", err);
             }
         }
 
         function render(raw, chapters, items) {
+            // عرض المواد الخام
             const rawContainer = document.getElementById('rawMaterialsContainer');
             if (!raw || raw.length === 0) {
-                rawContainer.innerHTML = `<p style="color:#888;">لا توجد مواد خام مضافة حالياً.</p>`;
+                rawContainer.innerHTML = `<p style="color:#888;">لا توجد مواد خام مضافة.</p>`;
             } else {
                 rawContainer.innerHTML = raw.map(r => `
                     <div class="card">
-                        <h3>${r.name || r.title || 'بدون اسم'}</h3>
-                        <p>${r.description || r.details || 'لا توجد تفاصيل'}</p>
+                        <h3>${r.name || 'بدون اسم'}</h3>
+                        <p>${r.description || 'لا توجد تفاصيل'}</p>
                     </div>
                 `).join('');
             }
 
+            // عرض الأبواب والمواد التابعة لها
             const chaptersContainer = document.getElementById('chaptersContainer');
             if (!chapters || chapters.length === 0) {
-                chaptersContainer.innerHTML = `<p style="color:#888;">لا توجد أبواب مضافة حالياً.</p>`;
+                chaptersContainer.innerHTML = `<p style="color:#888;">لا توجد أبواب مضافة.</p>`;
                 return;
             }
 
@@ -145,15 +147,15 @@
                     `<div class="grid" style="margin-top:10px;">` + 
                     chItems.map(i => `
                         <div class="card" style="background:#f8f9fa;">
-                            <h3>${i.name_ar || i.name_en || i.name || 'مادة'}</h3>
-                            <p>${i.details || i.description ? (i.details || i.description) : 'لا توجد تفاصيل'}</p>
+                            <h3>${i.name_ar || i.name_en || 'مادة'}</h3>
+                            <p>${i.details || 'لا توجد تفاصيل'}</p>
                         </div>
                     `).join('') + `</div>` 
                     : `<p style="font-size:13px; color:#888;">لا توجد مواد تحت هذا الباب.</p>`;
 
                 return `
                     <div style="background:white; padding:15px; border-radius:8px; margin-bottom:15px; border-right:4px solid #00897b; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                        <h3 style="color:#00897b; margin-top:0;">${ch.title_ar || ch.title_en || ch.name || 'باب'}</h3>
+                        <h3 style="color:#00897b; margin-top:0;">${ch.title_ar || ch.title_en || 'باب'}</h3>
                         ${itemsHtml}
                     </div>
                 `;
@@ -168,9 +170,9 @@
             }
 
             const filteredRaw = globalRaw.filter(r => (r.name || '').toLowerCase().includes(query) || (r.description || '').toLowerCase().includes(query));
-            const filteredItems = globalItems.filter(i => (i.name_ar || '').toLowerCase().includes(query) || (i.details || '').toLowerCase().includes(query));
+            const filteredItems = globalItems.filter(i => (i.name_ar || '').toLowerCase().includes(query) || (i.name_en || '').toLowerCase().includes(query) || (i.details || '').toLowerCase().includes(query));
             const matchedIds = new Set(filteredItems.map(i => i.chapter_id));
-            const filteredChapters = globalChapters.filter(ch => matchedIds.has(ch.id) || (ch.title_ar || '').toLowerCase().includes(query));
+            const filteredChapters = globalChapters.filter(ch => matchedIds.has(ch.id) || (ch.title_ar || '').toLowerCase().includes(query) || (ch.title_en || '').toLowerCase().includes(query));
 
             render(filteredRaw, filteredChapters, filteredItems);
         }
