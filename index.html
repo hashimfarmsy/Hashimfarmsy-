@@ -2,200 +2,36 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موسوعة هاشم فارمسي</title>
+    <title>فحص خطوة بخطوة</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body {
-            font-family: Tahoma, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            color: #333;
-        }
-        header {
-            background-color: #00897b;
-            color: white;
-            padding: 15px 25px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        header h1 {
-            margin: 0;
-            font-size: 20px;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-        .error-banner {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ffcdd2;
-            font-size: 14px;
-            word-break: break-all;
-        }
-        .search-box {
-            margin-bottom: 25px;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 12px 15px;
-            font-size: 16px;
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-            box-sizing: border-box;
-            background-color: #fff;
-        }
-        .section-title {
-            color: #00897b;
-            border-bottom: 2px solid #00897b;
-            padding-bottom: 5px;
-            margin-top: 30px;
-            font-size: 18px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-        .card h3 {
-            margin: 0 0 8px 0;
-            color: #333;
-            font-size: 16px;
-        }
-        .card p {
-            font-size: 13px;
-            color: #666;
-            margin: 0;
-            line-height: 1.4;
-        }
-    </style>
 </head>
-<body>
-
-    <header>
-        <h1>موسوعة هاشم فارمسي للمواد والتجميل</h1>
-    </header>
-
-    <div class="container">
-        <div id="errorContainer"></div>
-
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="ابحث في المواد الخام والأبواب الدراسية..." oninput="filterData()">
-        </div>
-
-        <div class="section-title">🧪 المواد الخام (Raw Materials)</div>
-        <div id="rawMaterialsContainer" class="grid">
-            <p style="color: #666;">جاري تحميل المواد الخام...</p>
-        </div>
-
-        <div class="section-title">📚 الأبواب والمواد الدراسية</div>
-        <div id="chaptersContainer" style="margin-top: 15px;">
-            <p style="color: #666;">جاري تحميل الأبواب...</p>
-        </div>
-    </div>
+<body style="font-family: Tahoma; padding: 20px;">
+    <h2>🔍 خطوة 1: فحص جدول المواد الخام</h2>
+    <div id="result" style="padding: 15px; background: #eee; border-radius: 5px;">جاري الفحص...</div>
 
     <script>
         const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let globalRaw = [];
-        let globalChapters = [];
-        let globalItems = [];
-
-        async function loadData() {
+        async function testStep1() {
+            const resDiv = document.getElementById('result');
             try {
-                const { data: raw, error: rawErr } = await supabase.from('raw_materials').select('*');
-                if (rawErr) throw new Error("خطأ في المواد الخام: " + rawErr.message);
-
-                const { data: chapters, error: chErr } = await supabase.from('chapters').select('*').order('order_index', { ascending: true });
-                if (chErr) throw new Error("خطأ في الأبواب: " + chErr.message);
-
-                const { data: items, error: itmErr } = await supabase.from('items').select('*');
-                if (itmErr) throw new Error("خطأ في العناصر: " + itmErr.message);
-
-                globalRaw = raw || [];
-                globalChapters = chapters || [];
-                globalItems = items || [];
-
-                render(globalRaw, globalChapters, globalItems);
+                const { data, error } = await supabase.from('raw_materials').select('*');
+                
+                if (error) {
+                    resDiv.innerHTML = `<span style="color:red;">❌ خطأ من سوبابيس: ${error.message}</span>`;
+                } else if (!data || data.length === 0) {
+                    resDiv.innerHTML = `<span style="color:orange;">⚠️ الجدول متصل ولكن لم يتم العثور على بيانات (فارغ).</span>`;
+                } else {
+                    resDiv.innerHTML = `<span style="color:green;">✅ النجاح! تم جلب (${data.length}) عنصر بنجاح. أول مادة هي: ${data[0].name}</span>`;
+                }
             } catch (err) {
-                console.error(err);
-                document.getElementById('errorContainer').innerHTML = `<div class="error-banner">⚠️ حدث خطأ تقني: ${err.message}</div>`;
-                document.getElementById('rawMaterialsContainer').innerHTML = `<p style="color:red;">فشل التحميل</p>`;
-                document.getElementById('chaptersContainer').innerHTML = `<p style="color:red;">فشل التحميل</p>`;
+                resDiv.innerHTML = `<span style="color:red;">❌ خطأ برمجي: ${err.message}</span>`;
             }
         }
 
-        function render(raw, chapters, items) {
-            const rawContainer = document.getElementById('rawMaterialsContainer');
-            if (!raw || raw.length === 0) {
-                rawContainer.innerHTML = `<p style="color:#888;">لا توجد مواد خام مضافة.</p>`;
-            } else {
-                rawContainer.innerHTML = raw.map(r => `
-                    <div class="card">
-                        <h3>${r.name || 'بدون اسم'}</h3>
-                        <p>${r.description || 'لا توجد تفاصيل'}</p>
-                    </div>
-                `).join('');
-            }
-
-            const chaptersContainer = document.getElementById('chaptersContainer');
-            if (!chapters || chapters.length === 0) {
-                chaptersContainer.innerHTML = `<p style="color:#888;">لا توجد أبواب مضافة.</p>`;
-                return;
-            }
-
-            chaptersContainer.innerHTML = chapters.map(ch => {
-                const chItems = items.filter(i => i.chapter_id === ch.id);
-                const itemsHtml = chItems.length > 0 ? 
-                    `<div class="grid" style="margin-top:10px;">` + 
-                    chItems.map(i => `
-                        <div class="card" style="background:#f8f9fa;">
-                            <h3>${i.name_ar || i.name_en || 'مادة'}</h3>
-                            <p>${i.details || 'لا توجد تفاصيل'}</p>
-                        </div>
-                    `).join('') + `</div>` 
-                    : `<p style="font-size:13px; color:#888;">لا توجد مواد تحت هذا الباب.</p>`;
-
-                return `
-                    <div style="background:white; padding:15px; border-radius:8px; margin-bottom:15px; border-right:4px solid #00897b; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                        <h3 style="color:#00897b; margin-top:0;">${ch.title_ar || ch.title_en || 'باب'}</h3>
-                        ${itemsHtml}
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function filterData() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            if (!query) {
-                render(globalRaw, globalChapters, globalItems);
-                return;
-            }
-
-            const filteredRaw = globalRaw.filter(r => (r.name || '').toLowerCase().includes(query) || (r.description || '').toLowerCase().includes(query));
-            const filteredItems = globalItems.filter(i => (i.name_ar || '').toLowerCase().includes(query) || (i.name_en || '').toLowerCase().includes(query) || (i.details || '').toLowerCase().includes(query));
-            const matchedIds = new Set(filteredItems.map(i => i.chapter_id));
-            const filteredChapters = globalChapters.filter(ch => matchedIds.has(ch.id) || (ch.title_ar || '').toLowerCase().includes(query) || (ch.title_en || '').toLowerCase().includes(query));
-
-            render(filteredRaw, filteredChapters, filteredItems);
-        }
-
-        loadData();
+        testStep1();
     </script>
 </body>
 </html>
