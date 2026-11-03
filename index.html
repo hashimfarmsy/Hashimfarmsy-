@@ -157,7 +157,7 @@
                 <input type="password" id="password" required placeholder="6 أحرف على الأقل">
             </div>
 
-            <button type="submit" id="regBtn">إتمام التسجيل وإنشاء الحساب</button>
+            <button type="submit" id="regBtn">إتمام التسجيل وإرسال إثبات الدفع</button>
         </form>
 
         <div class="login-link">
@@ -184,15 +184,16 @@
             e.preventDefault();
 
             const fullName = document.getElementById('fullName').value.trim();
-            const phone = document.getElementById('phone').value.trim();
+            const phone = document.getElementById('phone`)[span_1](start_span)[span_1](end_span).value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
             regBtn.disabled = true;
-            regBtn.textContent = 'جاري إنشاء الحساب...';
+            regBtn.textContent = 'جاري حفظ بياناتك في النظام...';
 
             try {
-                const { data, error } = await supabase.auth.signUp({
+                // 1. إنشاء الحساب في نظام المصادقة الأساسي لـ Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: email,
                     password: password,
                     options: {
@@ -203,16 +204,38 @@
                     }
                 });
 
-                if (error) throw error;
+                if (authError) throw authError;
 
-                alert('تم إنشاء الحساب بنجاح! مرحباً بك في موسوعة هاشم.');
-                window.location.href = 'login.html';
+                // 2. حفظ بيانات الطالب في جدول profiles (الإدارة الخاصة بك) مع وضع is_approved كـ false (معلق)
+                const { error: dbError } = await supabase
+                    .from('profiles')
+                    .insert([
+                        { 
+                            id: authData.user.id,
+                            full_name: fullName, 
+                            phone: phone, 
+                            role: 'student',
+                            is_approved: false
+                        }
+                    ]);
+
+                if (dbError) throw dbError;
+
+                // 3. تجهيز رسالة واتساب عامة للإدارة (خالية من البيانات الحساسة مثل كلمة المرور)
+                const myWhatsAppNumber = '249998607716';
+                const whatsappMessage = `السلام عليكم إدارة هاشم فارمسي، لقد قمت بالتسجيل في الموسوعة باسم (${fullName}) ورقم الهاتف (${phone}). أرجو مراجعة حسابي وتأكيد الاشتراك.`;
+
+                const encodedMessage = encodeURIComponent(whatsappMessage);
+                const whatsappURL = `https://wa.me/${myWhatsAppNumber}?text=${encodedMessage}`;
+
+                alert('تم تسجيل حسابك وحفظ بياناتك في لوحة الإدارة بنجاح! سيتم تحويلك الآن عبر الواتساب لمتابعة تأكيد الدفع.');
+                window.location.href = whatsappURL;
 
             } catch (error) {
                 console.error('Registration Error:', error);
                 alert('خطأ في التسجيل: ' + error.message);
                 regBtn.disabled = false;
-                regBtn.textContent = 'إتمام التسجيل وإنشاء الحساب';
+                regBtn.textContent = 'إتمام التسجيل وإرسال إثبات الدفع';
             }
         });
     </script>
