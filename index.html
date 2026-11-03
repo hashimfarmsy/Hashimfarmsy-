@@ -1,27 +1,101 @@
-<!-- ضع الكود هنا بالظبط في نهاية صفحة الـ HTML -->
-<script>
-async function handleStudentSignup(event) {
-    event.preventDefault();
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة هاشم فارمسي - تسجيل الطلاب</title>
+    <!-- استدعاء مكتبة Supabase رسمياً -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .signup-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const fullName = document.getElementById('fullName').value.trim();
-    const phone = document.getElementById('phone').value.trim();
+    <div class="signup-container">
+        <h2>تسجيل طالب جديد</h2>
+        <form id="signupForm" onsubmit="handleStudentSignup(event)">
+            <input type="text" id="fullName" placeholder="الاسم الكامل" required>
+            <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+            <input type="password" id="password" placeholder="كلمة المرور" required>
+            <input type="text" id="phone" placeholder="رقم الهاتف" required>
+            <button type="submit">تسجيل حساب جديد</button>
+        </form>
+    </div>
 
-    const { error } = await supabase.rpc('register_new_student', {
-        p_email: email,
-        p_password: password,
-        p_full_name: fullName,
-        p_phone: phone
-    });
+    <script>
+        // إعداد اتصال Supabase الخاص بمشروعك
+        const SUPABASE_URL = 'https://kbltufqozhxtpvbwyvji.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtibHR1ZnFvemh4dHB2Ynd5dmppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjc0MTYsImV4cCI6MjA1NTk0MzQxNn0.7Uf3Hk2Yv3kXj2Yv3kXj2Yv3kXj2Yv3kXj2Yv3kXj2Y'; 
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    if (error) {
-        alert("حدث خطأ أثناء التسجيل: " + error.message);
-        console.error("Supabase Error:", error);
-    } else {
-        alert("تم إنشاء الحساب بنجاح! جاري تحويلك إلى الواتساب...");
-        window.location.href = "https://wa.me/249998607716?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%B0%20%D8%A3%D8%B3%D8%AA%D8%A7%D8%B0%20%D9%87%D8%A7%D8%B5%D9%85%D8%8C%20%D9%84%D9%82%D8%AF%20%D8%B3%D8%AC%D9%84%D8%AA%20%D9%84%D8%AA%D9%88%D9%8A%20%D9%81%D9%8A%20%D9%85%D9%86%D8%B5%D8%A9%20%D9%87%D8%A7%D8%B5%D9%85%20%D9%81%D8%A7%D8%B1%D9%85%D8%B3%D9%8A%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%AD%D8%B3%D8%A7%D8%A8%D9%8A.";
-    }
-}
-</script>
+        async function handleStudentSignup(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            const { error } = await supabase.rpc('register_new_student', {
+                p_email: email,
+                p_password: password,
+                p_full_name: fullName,
+                p_phone: phone
+            });
+
+            if (error) {
+                alert("حدث خطأ أثناء التسجيل: " + error.message);
+                console.error("Supabase Error:", error);
+            } else {
+                alert("تم إنشاء الحساب بنجاح! جاري تحويلك إلى الواتساب...");
+                window.location.href = "https://wa.me/249998607716?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%B0%20%D8%A3%D8%B3%D8%AA%D8%A7%D8%B0%20%D9%87%D8%A7%D8%B5%D9%85%D8%8C%20%D9%84%D9%82%D8%AF%20%D8%B3%D8%AC%D9%84%D8%AA%20%D9%84%D8%AA%D9%88%D9%8A%20%D9%81%D9%8A%20%D9%85%D9%86%D8%B5%D8%A9%20%D9%87%D8%A7%D8%B5%D9%85%20%D9%81%D8%A7%D8%B1%D9%85%D8%B3%D9%8A%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%AD%D8%B3%D8%A7%D8%A8%D9%8A.";
+            }
+        }
+    </script>
 </body>
+</html>
