@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موسوعة هاشم فارمسي - المواد الخام والأبواب</title>
+    <title>موسوعة هاشم فارمسي</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -24,18 +24,6 @@
         header h1 {
             margin: 0;
             font-size: 18px;
-        }
-        .admin-link {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: background 0.2s;
-        }
-        .admin-link:hover {
-            background-color: rgba(255, 255, 255, 0.3);
         }
         .container {
             max-width: 1100px;
@@ -73,13 +61,6 @@
             border-radius: 8px;
             border: 1px solid #e9ecef;
             box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            border-color: #00897b;
         }
         .card h3 {
             margin: 0 0 8px 0;
@@ -97,26 +78,22 @@
 <body>
 
     <header>
-        <h1>موسوعة هاشم فارمسي (مفتوحة للجميع)</h1>
-        <a href="login.html" class="admin-link">دخول الإدارة</a>
+        <h1>موسوعة هاشم فارمسي</h1>
     </header>
 
     <div class="container">
-        <!-- شريط البحث السريع -->
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="ابحث عن مادة خام، باب، أو عنصر دراسي..." oninput="filterData()">
+            <input type="text" id="searchInput" placeholder="ابحث في الموسوعة والمواد الخام..." oninput="filterData()">
         </div>
 
-        <!-- قسم المواد الخام -->
         <div class="section-title">🧪 المواد الخام (Raw Materials)</div>
         <div id="rawMaterialsContainer" class="grid">
-            <p style="color: #666;">جاري تحميل المواد الخام...</p>
+            <p style="color: #666;">جاري التحميل...</p>
         </div>
 
-        <!-- قسم الأبواب والمواد الدراسية -->
         <div class="section-title">📚 الأبواب والمواد الدراسية</div>
         <div id="chaptersContainer" style="margin-top: 15px;">
-            <p style="color: #666;">جاري تحميل الأبواب...</p>
+            <p style="color: #666;">جاري التحميل...</p>
         </div>
     </div>
 
@@ -125,53 +102,50 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let globalRawMaterials = [];
+        let globalRaw = [];
         let globalChapters = [];
         let globalItems = [];
 
-        async function loadAllData() {
-            // 1. جلب المواد الخام
-            const { data: rawMaterials, error: rawError } = await supabase
-                .from('raw_materials')
-                .select('*');
+        async function loadData() {
+            try {
+                const { data: raw } = await supabase.from('raw_materials').select('*');
+                const { data: chapters } = await supabase.from('chapters').select('*').order('order_index');
+                const { data: items } = await supabase.from('items').select('*');
 
-            // 2. جلب الأبواب والمواد
-            const { data: chapters } = await supabase.from('chapters').select('*').order('order_index');
-            const { data: items } = await supabase.from('items').select('*');
+                globalRaw = raw || [];
+                globalChapters = chapters || [];
+                globalItems = items || [];
 
-            globalRawMaterials = rawMaterials || [];
-            globalChapters = chapters || [];
-            globalItems = items || [];
-
-            renderData(globalRawMaterials, globalChapters, globalItems);
+                render(globalRaw, globalChapters, globalItems);
+            } catch (err) {
+                console.error(err);
+            }
         }
 
-        function renderData(rawMaterials, chapters, items) {
-            // عرض المواد الخام
+        function render(raw, chapters, items) {
             const rawContainer = document.getElementById('rawMaterialsContainer');
-            if (rawMaterials.length === 0) {
-                rawContainer.innerHTML = `<p style="color: #888;">لا توجد مواد خام مضافة حالياً.</p>`;
+            if (!raw || raw.length === 0) {
+                rawContainer.innerHTML = `<p style="color:#888;">لا توجد مواد خام مضافة.</p>`;
             } else {
-                rawContainer.innerHTML = rawMaterials.map(item => `
+                rawContainer.innerHTML = raw.map(r => `
                     <div class="card">
-                        <h3>${item.name || 'بدون اسم'}</h3>
-                        <p>${item.description || 'لا توجد تفاصيل...'}</p>
+                        <h3>${r.name || 'بدون اسم'}</h3>
+                        <p>${r.description || 'لا توجد تفاصيل'}</p>
                     </div>
                 `).join('');
             }
 
-            // عرض الأبواب والمواد
             const chaptersContainer = document.getElementById('chaptersContainer');
-            if (chapters.length === 0) {
-                chaptersContainer.innerHTML = `<p style="color: #888;">لا توجد أبواب مضافة حالياً.</p>`;
+            if (!chapters || chapters.length === 0) {
+                chaptersContainer.innerHTML = `<p style="color:#888;">لا توجد أبواب مضافة.</p>`;
                 return;
             }
 
-            chaptersContainer.innerHTML = chapters.map(chapter => {
-                const chapterItems = items.filter(i => i.chapter_id === chapter.id);
-                const itemsHtml = chapterItems.length > 0 ? 
+            chaptersContainer.innerHTML = chapters.map(ch => {
+                const chItems = items.filter(i => i.chapter_id === ch.id);
+                const itemsHtml = chItems.length > 0 ? 
                     `<div class="grid" style="margin-top:10px;">` + 
-                    chapterItems.map(i => `
+                    chItems.map(i => `
                         <div class="card" style="background:#f8f9fa;">
                             <h3>${i.name_ar || i.name_en || 'مادة'}</h3>
                             <p>${i.details ? i.details.substring(0, 70) + '...' : 'لا توجد تفاصيل'}</p>
@@ -181,7 +155,7 @@
 
                 return `
                     <div style="background:white; padding:15px; border-radius:8px; margin-bottom:15px; border-right:4px solid #00897b; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                        <h3 style="color:#00897b; margin-top:0;">${chapter.title_ar || chapter.title_en || 'باب'}</h3>
+                        <h3 style="color:#00897b; margin-top:0;">${ch.title_ar || ch.title_en || 'باب'}</h3>
                         ${itemsHtml}
                     </div>
                 `;
@@ -191,27 +165,19 @@
         function filterData() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             if (!query) {
-                renderData(globalRawMaterials, globalChapters, globalItems);
+                render(globalRaw, globalChapters, globalItems);
                 return;
             }
 
-            const filteredRaw = globalRawMaterials.filter(r => 
-                (r.name || '').toLowerCase().includes(query) || (r.description || '').toLowerCase().includes(query)
-            );
+            const filteredRaw = globalRaw.filter(r => (r.name || '').toLowerCase().includes(query) || (r.description || '').toLowerCase().includes(query));
+            const filteredItems = globalItems.filter(i => (i.name_ar || '').toLowerCase().includes(query) || (i.details || '').toLowerCase().includes(query));
+            const matchedIds = new Set(filteredItems.map(i => i.chapter_id));
+            const filteredChapters = globalChapters.filter(ch => matchedIds.has(ch.id) || (ch.title_ar || '').toLowerCase().includes(query));
 
-            const filteredItems = globalItems.filter(i => 
-                (i.name_ar || '').toLowerCase().includes(query) || (i.name_en || '').toLowerCase().includes(query) || (i.details || '').toLowerCase().includes(query)
-            );
-
-            const matchedChapterIds = new Set(filteredItems.map(i => i.chapter_id));
-            const filteredChapters = globalChapters.filter(ch => 
-                matchedChapterIds.has(ch.id) || (ch.title_ar || '').toLowerCase().includes(query)
-            );
-
-            renderData(filteredRaw, filteredChapters, filteredItems);
+            render(filteredRaw, filteredChapters, filteredItems);
         }
 
-        loadAllData();
+        loadData();
     </script>
 </body>
 </html>
