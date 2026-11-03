@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موسوعة مواد التجميل — Hashim Raw Materials Encyclopedia</title>
+    <!-- استدعاء مكتبة سوبابيس -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary-color: #00897b;
+            --primary-dark: #00695c;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+        }
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+            direction: rtl;
+            text-align: right;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+        header p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .hero-banner {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .hero-banner img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary-color);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .search-box {
+            margin-bottom: 25px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .search-box input:focus {
+            border-color: var(--primary-color);
+        }
+        .section-title {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-color: var(--primary-color);
+        }
+        .card h3 {
+            margin: 0 0 8px 0;
+            color: var(--primary-dark);
+            font-size: 16px;
+        }
+        .card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+        }
+        .chapter-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-right: 5px solid var(--primary-color);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .chapter-title {
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            color: var(--text-muted);
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        .contact-btn {
+            display: inline-block;
+            background-color: #25d366;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .loading-text, .error-text {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+        .loading-text { color: var(--text-muted); }
+        .error-text { color: #d32f2f; background: #ffebee; border-radius: 6px; }
+
+        /* نافذة تفاصيل المادة المنبثقة (Modal) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            text-align: right;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #eee;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>موسوعة مواد التجميل — Hashim Raw Materials Encyclopedia</h1>
+        <p>المرجع العلمي الشامل للمواد الخام والأبواب الدراسية الصيدلانية والتجميلية</p>
+    </header>
+
+    <div class="container">
+        <!-- واجهة ترحيبية مع صورة رمزية احترافية -->
+        <div class="hero-banner">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&crop=faces" alt="صورة إشرافية">
+            <h2 style="margin: 0 0 5px 0; color: var(--primary-color);">مرحباً بكم في المنصة التعليمية</h2>
+            <p style="color: var(--text-muted); margin: 0; font-size: 14px;">تصفح المواد والأبواب بكل سهولة ويسر مباشرة من قاعدة البيانات.</p>
+        </div>
+
+        <!-- شريط البحث -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ابحث عن مادة خام، أو عنوان باب، أو تفاصيل..." oninput="filterData()">
+        </div>
+
+        <!-- قسم المواد الخام -->
+        <div class="section-title">🧪 المواد الخام (Raw Materials)</div>
+        <div id="rawMaterialsContainer" class="grid">
+            <div class="loading-text">جاري تحميل المواد الخام...</div>
+        </div>
+
+        <!-- قسم الأبواب الدراسية -->
+        <div class="section-title">📚 الأبواب والمواد الدراسية</div>
+        <div id="chaptersContainer">
+            <div class="loading-text">جاري تحميل الأبواب الدراسية...</div>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة لعرض تفاصيل البطاقة بشكل مرتب وآمن -->
+    <div id="detailsModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModalDirect()">×</button>
+            <h3 id="modalTitle" style="color: var(--primary-dark); margin-top: 0; margin-bottom: 15px;"></h3>
+            <p id="modalBody" style="color: var(--text-main); line-height: 1.6; margin: 0; white-space: pre-wrap;"></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>جميع الحقوق محفوظة - موسوعة مواد التجميل — Hashim Raw Materials Encyclopedia</p>
+        <p>للتواصل والاستفسار: <span dir="ltr" style="font-weight: bold;">0998607716</span></p>
+        <a href="tel:0998607716" class="contact-btn">📞 اتصال مباشر</a>
+    </footer>
+
+    <script>
+        // إعدادات الاتصال المباشر بقاعدة بيانات Supabase
+        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let globalRaw = [];
+        let globalChapters = [];
+        let globalItems = [];
+
+        // متغيرات تتبع حالات التحميل بصورة مستقلة تماماً
+        let rawLoadFailed = false;
+        let chaptersLoadFailed = false;
+        let itemsLoadFailed = false;
+
+        // دالة آمنة لمنع حقن الكود (XSS) باستخدام textContent حصراً
+        function createSafeElement(tag, className, textContent) {
+            const el = document.createElement(tag);
+            if (className) el.className = className;
+            if (textContent !== undefined && textContent !== null) {
+                el.textContent = textContent;
+            }
+            return el;
+        }
+
+        async function loadData() {
+            try {
+                const [rawRes, chaptersRes, itemsRes] = await Promise.allSettled([
+                    supabase.from('raw_materials').select('*'),
+                    supabase.from('chapters').select('*').order('order_index', { ascending: true }),
+                    supabase.from('items').select('*')
+                ]);
+
+                // 1. معالجة جدول المواد الخام بشكل مستقل
+                if (rawRes.status === 'fulfilled' && !rawRes.value.error) {
+                    globalRaw = rawRes.value.data || [];
+                    rawLoadFailed = false;
+                } else {
+                    rawLoadFailed = true;
+                    document.getElementById('rawMaterialsContainer').innerHTML = '';
+                    document.getElementById('rawMaterialsContainer').appendChild(
+                        createSafeElement('div', 'error-text', '❌ تعذر تحميل المواد الخام من قاعدة البيانات.')
+                    );
+                }
+
+                // 2. معالجة جدول الأبواب
+                if (chaptersRes.status === 'fulfilled' && !chaptersRes.value.error) {
+                    globalChapters = chaptersRes.value.data || [];
+                    chaptersLoadFailed = false;
+                } else {
+                    chaptersLoadFailed = true;
+                }
+
+                // 3. معالجة جدول المواد التابعة
+                if (itemsRes.status === 'fulfilled' && !itemsRes.value.error) {
+                    globalItems = itemsRes.value.data || [];
+                    itemsLoadFailed = false;
+                } else {
+                    itemsLoadFailed = true;
+                }
+
+                // معالجة عرض الأبواب والمواد بناءً على نجاح أو فشل الجداول المرتبطة
+                const chaptersContainer = document.getElementById('chaptersContainer');
+                chaptersContainer.innerHTML = '';
+
+                if (chaptersLoadFailed && itemsLoadFailed) {
+                    chaptersContainer.appendChild(createSafeElement('div', 'error-text', '❌ تعذر تحميل الأبواب والمواد الدراسية.'));
+                } else if (chaptersLoadFailed && !itemsLoadFailed) {
+                    chaptersContainer.appendChild(createSafeElement('div', 'error-text', '❌ تعذر تحميل الأبواب الدراسية.'));
+                } else if (!chaptersLoadFailed && itemsLoadFailed) {
+                    chaptersContainer.appendChild(createSafeElement('div', 'error-text', '❌ تعذر تحميل المواد التابعة للفصول.'));
+                } else {
+                    // إذا نجح تحميل الأبواب والمواد معاً
+                    renderChaptersAndItems(globalChapters, globalItems);
+                }
+
+                // إذا نجح تحميل المواد الخام وحدها (ولم يفشل) يتم عرضها
+                if (!rawLoadFailed) {
+                    renderRawMaterials(globalRaw);
+                }
+
+            } catch (err) {
+                console.error("خطأ عام أثناء جلب البيانات:", err);
+                if (rawLoadFailed || true) {
+                    document.getElementById('rawMaterialsContainer').innerHTML = '';
+                    document.getElementById('rawMaterialsContainer').appendChild(createSafeElement('div', 'error-text', '❌ حدث خطأ غير متوقع في الاتصال.'));
+                }
+                document.getElementById('chaptersContainer').innerHTML = '';
+                document.getElementById('chaptersContainer').appendChild(createSafeElement('div', 'error-text', '❌ حدث خطأ غير متوقع في الاتصال.'));
+            }
+        }
+
+        function renderRawMaterials(rawList) {
+            const rawContainer = document.getElementById('rawMaterialsContainer');
+            rawContainer.innerHTML = '';
+            
+            if (rawList.length === 0) {
+                const p = createSafeElement('p', '', 'لا توجد مواد خام مضافة حالياً.');
+                p.style.color = 'var(--text-muted)';
+                rawContainer.appendChild(p);
+            } else {
+                rawList.forEach(r => {
+                    const card = createSafeElement('div', 'card');
+                    card.onclick = () => showDetails(r.name || 'مادة خام', r.description || 'لا توجد تفاصيل متاحة.');
+                    
+                    const h3 = createSafeElement('h3', '', r.name || 'بدون اسم');
+                    const p = createSafeElement('p', '', r.description || 'لا توجد تفاصيل متاحة.');
+                    
+                    card.appendChild(h3);
+                    card.appendChild(p);
+                    rawContainer.appendChild(card);
+                });
+            }
+        }
+
+        function renderChaptersAndItems(chaptersList, itemsList) {
+            const chaptersContainer = document.getElementById('chaptersContainer');
+            chaptersContainer.innerHTML = '';
+
+            if (chaptersList.length === 0) {
+                const p = createSafeElement('p', '', 'لا توجد أبواب دراسية مضافة حالياً.');
+                p.style.color = 'var(--text-muted)';
+                chaptersContainer.appendChild(p);
+                return;
+            }
+
+            chaptersList.forEach(ch => {
+                const chapterBox = createSafeElement('div', 'chapter-box');
+                const chTitle = createSafeElement('h3', 'chapter-title', `📖 ${ch.title_ar || ch.title_en || 'باب دراسي'}`);
+                chapterBox.appendChild(chTitle);
+
+                const chItems = itemsList.filter(i => i.chapter_id === ch.id);
+                
+                if (chItems.length === 0) {
+                    const noItemsP = createSafeElement('p', '', 'لا توجد مواد مدرجة تحت هذا الباب حالياً.');
+                    noItemsP.style.cssText = 'font-size:13px; color:var(--text-muted); margin-top:8px;';
+                    chapterBox.appendChild(noItemsP);
+                } else {
+                    const gridDiv = createSafeElement('div', 'grid');
+                    gridDiv.style.marginTop = '12px';
+
+                    chItems.forEach(i => {
+                        const itemCard = createSafeElement('div', 'card');
+                        itemCard.style.background = '#fafbfc';
+                        itemCard.onclick = () => showDetails(i.name_ar || i.name_en || 'مادة دراسية', i.details || 'لا توجد تفاصيل.');
+
+                        const itemH3 = createSafeElement('h3', '', i.name_ar || i.name_en || 'مادة بدون اسم');
+                        const itemP = createSafeElement('p', '', i.details || 'لا توجد تفاصيل.');
+
+                        itemCard.appendChild(itemH3);
+                        itemCard.appendChild(itemP);
+                        gridDiv.appendChild(itemCard);
+                    });
+
+                    chapterBox.appendChild(gridDiv);
+                }
+
+                chaptersContainer.appendChild(chapterBox);
+            });
+        }
+
+        // تفاصيل البطاقة المنبثقة
+        function showDetails(title, details) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').textContent = details;
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+
+        function closeModal(event) {
+            if (event.target.id === 'detailsModal') {
+                document.getElementById('detailsModal').style.display = 'none';
+            }
+        }
+
+        function closeModalDirect() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        // وظيفة البحث المحدثة بدقة لجمع الفصول المطابقة (بكل موادها) مع المواد الفردية المطابقة دون تكرار
+        function filterData() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            // التعامل مع فشل تحميل المواد الخام أثناء البحث إذا كان الجدول متعثراً
+            if (!rawLoadFailed) {
+                const filteredRaw = globalRaw.filter(r => 
+                    (r.name || '').toLowerCase().includes(query) || 
+                    (r.description || '').toLowerCase().includes(query)
+                );
+                renderRawMaterials(filteredRaw);
+            }
+
+            if (chaptersLoadFailed || itemsLoadFailed) {
+                return; // إذا كانت الفصول أو المواد متعثرة، نتوقف عن فلترتها ونكتفي برسائل الخطأ الخاصة بها
+            }
+
+            if (!query) {
+                renderChaptersAndItems(globalChapters, globalItems);
+                return;
+            }
+
+            // 1. الأبواب التي تطابق عناوينها كلمة البحث
+            const matchingChapters = globalChapters.filter(ch => 
+                (ch.title_ar || '').toLowerCase().includes(query) || 
+                (ch.title_en || '').toLowerCase().includes(query)
+            );
+
+            // معرفات الأبواب المطابقة للبحث كفصول
+            const chapterIdsToInclude = new Set(matchingChapters.map(ch => ch.id));
+
+            // 2. المواد الدراسية التي تطابق البحث بشكل فردي
+            const matchingItems = globalItems.filter(i => 
+                (i.name_ar || '').toLowerCase().includes(query) || 
+                (i.name_en || '').toLowerCase().includes(query) || 
+                (i.details || '').toLowerCase().includes(query)
+            );
+
+            // إضافة معرفات الأبواب الخاصة بالمقادير أو المواد المطابقة فردياً لكي تظهر فصولها أيضاً
+            matchingItems.forEach(i => {
+                if (i.chapter_id) {
+                    chapterIdsToInclude.add(i.chapter_id);
+                }
+            });
+
+            // تصفية قائمة الفصول النهائية المراد عرضها
+            const finalChapters = globalChapters.filter(ch => chapterIdsToInclude.has(ch.id));
+
+            // تجميع المواد لكل فصل نهائي بطريقة مانعة للتكرار ودقيقة:
+            // - إذا تطابق الفصل بالكامل مع البحث: نعرض جميع مواده.
+            // - إذا طابق البحث مادة بشكل فردي داخل فصل آخر: نعرض تلك المادة المطابقة فقط ضمن فصلها.
+            let activeItemsList = [];
+            finalChapters.forEach(ch => {
+                const isChapterMatched = matchingChapters.some(mc => mc.id === ch.id);
+                const chAllItems = globalItems.filter(i => i.chapter_id === ch.id);
+
+                if (isChapterMatched) {
+                    // إذا كان الفصل مطاباقاً للبحث، ندرج جميع مواده
+                    activeItemsList.push(...chAllItems);
+                } else {
+                    // إذا لم يتطابق الفصل، ندرج فقط المواد التابعة له والتي حققت مطابقة فردية
+                    const chMatchedItems = chAllItems.filter(i => matchingItems.some(mi => mi.id === i.id));
+                    activeItemsList.push(...chMatchedItems);
+                }
+            });
+
+            // إزالة أي تكرار محتمل للمواد بناءً على الـ id
+            const uniqueItemsMap = new Map();
+            activeItemsList.forEach(item => uniqueItemsMap.set(item.id, item));
+            const finalItemsList = Array.from(uniqueItemsMap.values());
+
+            renderChaptersAndItems(finalChapters, finalItemsList);
+        }
+
+        // تشغيل عملية الجلب فور تحميل الصفحة
+        loadData();
+    </script>
+</body>
+</html>
