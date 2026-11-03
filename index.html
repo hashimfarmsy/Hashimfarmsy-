@@ -1,33 +1,241 @@
-<script>
-    // ربط سوبابيس (إذا لم يكن مربوطاً مسبقاً)
-    const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // دالة جلب المواد وعرضها في التصميم الأصلي
-    async function loadMaterials() {
-        const { data: materials, error } = await supabase
-            .from('materials')
-            .select('*');
-
-        const container = document.getElementById('materialsList');
-        if (!container) return;
-
-        container.innerHTML = '';
-
-        if (error) {
-            console.error("خطأ:", error.message);
-            return;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل طالب جديد - موسوعة هاشم فارمسي</title>
+    <!-- استدعاء مكتبة Supabase رسمياً -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
         }
+        .container {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 420px;
+            box-sizing: border-box;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            font-size: 24px;
+            color: #111;
+            margin: 10px 0 5px 0;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: #00897b;
+            margin-bottom: 15px;
+        }
+        .welcome-box {
+            background-color: #e0f2f1;
+            border-right: 4px solid #00897b;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #263238;
+            margin-bottom: 15px;
+        }
+        .tagline {
+            background-color: #f1f3f5;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #495057;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        input:focus {
+            border-color: #00897b;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 137, 123, 0.2);
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #00897b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        .btn-submit:hover {
+            background-color: #00695c;
+        }
+        .btn-submit:disabled {
+            background-color: #adb5bd;
+            cursor: not-allowed;
+        }
+        .footer-links {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        .footer-links a {
+            color: #00897b;
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #868e96;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+        }
+    </style>
+</head>
+<body>
 
-        if (materials && materials.length > 0) {
-            materials.forEach(item => {
-                const card = document.createElement('div');
-                card.innerHTML = `<h3>${item.title || item.name}</h3><p>${item.description || item.content || ''}</p>`;
-                container.appendChild(card);
+    <div class="container">
+        <div class="header">
+            <h2>💊 هاشم فارمسي</h2>
+            <div class="subtitle">Hashim Pharmacy - Science & Results | علم ونتيجة</div>
+        </div>
+
+        <div class="welcome-box">
+            مرحباً بك في موسوعة هاشم للمواد الخام؛ مرجعك العلمي المتخصص لاكتشاف وفهم مواد التجميل والصناعات الصيدلانية، والتعمق في خصائصها وتركيبها الكيميائي واستخداماتها وتوافقها وفق أسس علمية مدروسة. هنا تتحول المعرفة إلى خبرة، والمعلومة إلى قدرة على الاختيار والتطبيق بثقة ووعي.
+        </div>
+
+        <div class="tagline">
+            🧪 «نفهم المادة... لننتقن العلم والصناعة»
+        </div>
+
+        <!-- نموذج التسجيل -->
+        <form id="signupForm" onsubmit="handleStudentSignup(event)">
+            <div class="form-group">
+                <label>الاسم الكامل:</label>
+                <input type="text" id="fullName" placeholder="أدخل اسمك الثلاثي" required>
+            </div>
+
+            <div class="form-group">
+                <label>رقم الهاتف:</label>
+                <input type="text" id="phone" placeholder="09xxxxxxxx" required>
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني:</label>
+                <input type="email" id="email" placeholder="example@domain.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور:</label>
+                <input type="password" id="password" placeholder="6 أحرف على الأقل" required>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-submit">تسجيل والدخول للموسوعة</button>
+        </form>
+
+        <div class="footer-links">
+            لديك حساب مسبق؟ <a href="login.html">تسجيل الدخول</a>
+        </div>
+
+        <div class="footer-text">
+            نعتز بانضمامك إلى مجتمعنا العلمي المميز.<br>هاشم فارمسي - علم ونتيجة
+        </div>
+    </div>
+
+    <!-- كود الربط والتوجيه التلقائي -->
+    <script>
+        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // التحقق من الجلسة لمنع العودة لصفحة التسجيل إذا كان مسجلاً
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                window.location.href = "materials.html"; // صفحة المواد الخاصة بك
+            }
+        }
+        checkSession();
+
+        async function handleStudentSignup(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري إنشاء الحساب والدخول...';
+
+            // تسجيل الحساب مع تمرير كلمة المرور في الـ metadata لتخزينها في الجدول
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                        phone: phone,
+                        password: password
+                    }
+                }
             });
-        }
-    }
 
-    window.addEventListener('DOMContentLoaded', loadMaterials);
-</script>
+            if (error) {
+                alert("خطأ في التسجيل: " + error.message);
+                console.error("Supabase Error:", error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'تسجيل والدخول للموسوعة';
+            } else {
+                // تسجيل الدخول البرمجي الفوري لضمان حفظ الجلسة
+                const { error: loginError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (loginError) {
+                    alert("تم التسجيل بنجاح، يرجى تسجيل الدخول.");
+                    window.location.href = "login.html";
+                } else {
+                    // الانتقال الفوري لواجهة المواد
+                    window.location.href = "materials.html";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
