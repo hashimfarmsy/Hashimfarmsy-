@@ -221,15 +221,15 @@
 
                 if (dbError) throw dbError;
 
-                // 3. توجيه الطالب للواتساب
+                // 3. توجيه الطالب للواتساب (تم تصحيح الرابط هنا)
                 const myWhatsAppNumber = '249998607716';
                 const whatsappMessage = `السلام عليكم إدارة هاشم فارمسي، لقد قمت بالتسجيل في الموسوعة باسم (${fullName}) ورقم الهاتف (${phone}). أرجو مراجعة حسابي وتأكيد الاشتراك.`;
 
                 const encodedMessage = encodeURIComponent(whatsappMessage);
-                const whatsappURL = `https://wa.me/${myWhatsAppNumber}?text=$encodedMessage`;
+                const whatsappURL = `https://wa.me/${myWhatsAppNumber}?text=${encodedMessage}`;
 
                 alert('تم تسجيل حسابك وحفظ بياناتك في لوحة الإدارة بنجاح! سيتم تحويلك الآن عبر الواتساب لمتابعة تأكيد الدفع.');
-                window.location.href = `https://wa.me/${myWhatsAppNumber}?text=${encodedMessage}`;
+                window.location.href = whatsappURL;
 
             } catch (error) {
                 console.error('Registration Error:', error);
