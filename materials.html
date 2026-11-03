@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موسوعة هاشم فارمسي - الأبواب والمواد</title>
+    <title>موسوعة هاشم فارمسي - تصفح مباشر</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -25,18 +25,6 @@
             margin: 0;
             font-size: 20px;
         }
-        .logout-btn {
-            background-color: #d32f2f;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .logout-btn:hover {
-            background-color: #b71c1c;
-        }
         .container {
             max-width: 1100px;
             margin: 25px auto;
@@ -53,10 +41,6 @@
             border-radius: 8px;
             box-sizing: border-box;
             background-color: #fff;
-        }
-        .search-box input:focus {
-            border-color: #00897b;
-            outline: none;
         }
         .chapter-section {
             background: white;
@@ -85,7 +69,7 @@
             border-radius: 8px;
             border: 1px solid #e9ecef;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
         }
         .item-card:hover {
             transform: translateY(-2px);
@@ -103,7 +87,6 @@
             margin: 0;
             line-height: 1.4;
         }
-        /* النافذة المنبثقة للتفاصيل */
         #detailsModal {
             display: none;
             position: fixed;
@@ -126,7 +109,6 @@
             max-height: 85vh;
             overflow-y: auto;
             position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .close-btn {
             position: absolute;
@@ -143,32 +125,23 @@
 <body>
 
     <header>
-        <h1>موسوعة هاشم فارمسي - الأبواب والمواد</h1>
-        <div>
-            <span id="studentName" style="margin-left: 15px; font-size: 14px;"></span>
-            <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
-        </div>
+        <h1>موسوعة هاشم فارمسي - تصفح مباشر</h1>
     </header>
 
     <div class="container">
-        <!-- شريط البحث الفوري -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="ابحث عن مادة أو عنصر..." oninput="filterItems()">
         </div>
 
-        <!-- حاوية الأبواب والمواد -->
         <div id="contentContainer">
             <p style="text-align: center; color: #666;">جاري تحميل الأبواب والمواد...</p>
         </div>
     </div>
 
-    <!-- نافذة تفاصيل المادة المنبثقة -->
     <div id="detailsModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal()">&times;</button>
-            <div id="modalBody">
-                <!-- تفاصيل المادة -->
-            </div>
+            <div id="modalBody"></div>
         </div>
     </div>
 
@@ -180,25 +153,12 @@
         let chaptersData = [];
         let itemsData = [];
 
-        async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                window.location.href = 'index.html';
-                return;
-            }
-            const user = session.user;
-            document.getElementById('studentName').textContent = "مرحباً: " + (user.user_metadata?.full_name || user.email);
-            loadData();
-        }
-
         async function loadData() {
-            // جلب الأبواب من جدول chapters
             const { data: chapters, error: chError } = await supabase
                 .from('chapters')
                 .select('*')
                 .order('order_index', { ascending: true });
 
-            // جلب المواد من جدول items
             const { data: items, error: itError } = await supabase
                 .from('items')
                 .select('*');
@@ -206,7 +166,7 @@
             const container = document.getElementById('contentContainer');
 
             if (chError || itError) {
-                container.innerHTML = `<p style="color: red; text-align: center;">تعسّر تحميل البيانات من الجداول.</p>`;
+                container.innerHTML = `<p style="color: red; text-align: center;">خطأ في جلب البيانات: ${chError?.message || itError?.message}</p>`;
                 return;
             }
 
@@ -221,7 +181,7 @@
             container.innerHTML = '';
 
             if (chapters.length === 0) {
-                container.innerHTML = `<p style="text-align: center;">لا توجد أبواب مضافة حالياً.</p>`;
+                container.innerHTML = `<p style="text-align: center;">لا توجد أبواب مضافة حالياً في قاعدة البيانات.</p>`;
                 return;
             }
 
@@ -236,7 +196,7 @@
                     itemsHtml = `<div class="items-grid">`;
                     chapterItems.forEach(item => {
                         const nameAr = item.name_ar || 'مادة بدون اسم';
-                        const details = item.details || 'لا توجد تفاصيل إضافية...';
+                        const details = item.details || 'لا توجد تفاصيل...';
                         itemsHtml += `
                             <div class="item-card" onclick='openModal(${JSON.stringify(item)})'>
                                 <h4>${nameAr}</h4>
@@ -246,7 +206,7 @@
                     });
                     itemsHtml += `</div>`;
                 } else {
-                    itemsHtml = `<p style="color: #888; font-size: 14px; margin-top: 10px;">لا توجد مواد مضافة تحت هذا الباب حالياً.</p>`;
+                    itemsHtml = `<p style="color: #888; font-size: 14px; margin-top: 10px;">لا توجد مواد تحت هذا الباب.</p>`;
                 }
 
                 section.innerHTML = `
@@ -271,7 +231,6 @@
                 return nameAr.includes(query) || nameEn.includes(query) || details.includes(query);
             });
 
-            // تصفية الأبواب التي تحتوي على المواد المفلترة أو مطابقة للبحث
             const matchedChapterIds = new Set(filteredItems.map(i => i.chapter_id));
             const filteredChapters = chaptersData.filter(ch => 
                 matchedChapterIds.has(ch.id) || (ch.title_ar || '').toLowerCase().includes(query)
@@ -296,12 +255,7 @@
             document.getElementById('detailsModal').style.display = 'none';
         }
 
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = 'index.html';
-        }
-
-        checkAuth();
+        loadData();
     </script>
 </body>
 </html>
