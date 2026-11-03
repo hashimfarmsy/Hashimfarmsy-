@@ -129,7 +129,7 @@
         </div>
 
         <div class="intro-box">
-            مرحباً بك في موسوعة هاشم للمواد الخام؛ مرجعك العلمي المتخصص لاكتشاف وفهم مواد التجميل والصناعات الصيدلانية، والتعمّق في خصائصها وتركيبها الكيميائي واستخداماتها وتوافقها وفق أسس علمية مدروسة. هنا تتحول المعرفة إلى خبرة، والمعلومة إلى قدرة على الاختيار والتطبيق بثقة ووعي.
+            مرحباً بك في موسوعة هاشم للمواد الخام؛ مرجعك العلمي المتخصص لاكتشاف وفهم مواد التجميل والصناعات الصيدلانية، والتعمّق في خصائصها وتركيبها الكيميائي واستخداماتها وتوافقها وفق أسس علمية مدروسة.
         </div>
 
         <div class="slogan">
@@ -206,22 +206,20 @@
 
                 if (authError) throw authError;
 
-                // 2. إدخال البيانات في جدول profiles
-                const { error: dbError } = await supabase
-                    .from('profiles')
-                    .insert([
-                        { 
-                            id: authData.user.id,
-                            full_name: fullName, 
-                            phone: phone, 
-                            role: 'student',
-                            is_approved: false
-                        }
-                    ]);
+                const userId = authData.user ? authData.user.id : null;
 
-                if (dbError) throw dbError;
+                if (userId) {
+                    // 2. استدعاء الدالة الآمنة لإدراج السجل في profiles دون مشاكل RLS
+                    const { error: rpcError } = await supabase.rpc('handle_new_student_signup', {
+                        user_id: userId,
+                        user_full_name: fullName,
+                        user_phone: phone
+                    });
 
-                // 3. توجيه الطالب للواتساب (تم تصحيح الرابط هنا)
+                    if (rpcError) throw rpcError;
+                }
+
+                // 3. توجيه الطالب للواتساب برسالة جاهزة
                 const myWhatsAppNumber = '249998607716';
                 const whatsappMessage = `السلام عليكم إدارة هاشم فارمسي، لقد قمت بالتسجيل في الموسوعة باسم (${fullName}) ورقم الهاتف (${phone}). أرجو مراجعة حسابي وتأكيد الاشتراك.`;
 
