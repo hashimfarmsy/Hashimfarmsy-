@@ -1,515 +1,121 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موسوعة مواد التجميل — Hashim Raw Materials Encyclopedia</title>
-    <!-- استدعاء مكتبة سوبابيس -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --primary-color: #00897b;
-            --primary-dark: #00695c;
-            --bg-color: #f4f6f8;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #e0e0e0;
-        }
-        body {
-            font-family: Tahoma, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            color: var(--text-main);
-            direction: rtl;
-            text-align: right;
-        }
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        header h1 {
-            margin: 0 0 10px 0;
-            font-size: 24px;
-        }
-        header p {
-            margin: 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        .hero-banner {
-            max-width: 1000px;
-            margin: 20px auto;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-        }
-        .hero-banner img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border: 3px solid var(--primary-color);
-        }
-        .container {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-        .search-box {
-            margin-bottom: 25px;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 14px 18px;
-            font-size: 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-sizing: border-box;
-            background-color: #fff;
-            outline: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .search-box input:focus {
-            border-color: var(--primary-color);
-        }
-        .section-title {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
-            margin-top: 35px;
-            margin-bottom: 15px;
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-        }
-        .card {
-            background: var(--card-bg);
-            padding: 18px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            border-color: var(--primary-color);
-        }
-        .card h3 {
-            margin: 0 0 8px 0;
-            color: var(--primary-dark);
-            font-size: 16px;
-        }
-        .card p {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin: 0;
-            line-height: 1.5;
-        }
-        .chapter-box {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            border-right: 5px solid var(--primary-color);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-        }
-        .chapter-title {
-            color: var(--primary-dark);
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            color: var(--text-muted);
-            margin-top: 40px;
-            border-top: 1px solid var(--border-color);
-            font-size: 14px;
-        }
-        .contact-btn {
-            display: inline-block;
-            background-color: #25d366;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 8px;
-        }
-        .loading-text, .error-text {
-            text-align: center;
-            padding: 20px;
-            font-style: italic;
-        }
-        .loading-text { color: var(--text-muted); }
-        .error-text { color: #d32f2f; background: #ffebee; border-radius: 6px; }
-
-        /* نافذة تفاصيل المادة المنبثقة (Modal) */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            position: relative;
-            text-align: right;
-        }
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: #eee;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            color: #333;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>دليل مواد التركيبات التجميلية</title>
+<style>
+:root{--bg:#faf6f2;--card:#fff;--tx:#2a2220;--mu:#7a6b66;--ac:#b4536a;--ac2:#f6e3e8;--bd:#eadfd8;--ok:#2f7d4f;--no:#b3392f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1618;--card:#2a2124;--tx:#f3e9e6;--mu:#b6a39e;--ac:#e58aa0;--ac2:#3d2830;--bd:#41343a;--ok:#6fcf97;--no:#ff8a80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1618;--card:#2a2124;--tx:#f3e9e6;--mu:#b6a39e;--ac:#e58aa0;--ac2:#3d2830;--bd:#41343a;--ok:#6fcf97;--no:#ff8a80;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Tahoma,"Segoe UI",system-ui,sans-serif;line-height:1.7}
+.w{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.35rem;margin:6px 0 2px}
+.sub{color:var(--mu);font-size:.9rem;margin:0 0 14px}
+input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;margin-bottom:14px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.b{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 10px;text-align:center;font:inherit;color:var(--tx);cursor:pointer}
+.b:active{background:var(--ac2)}
+.b .i{font-size:1.6rem;display:block}
+.b small{display:block;color:var(--mu);font-size:.75rem}
+.l{display:flex;flex-direction:column;gap:8px}
+.l .b{text-align:right;display:flex;justify-content:space-between;align-items:center;padding:12px 14px}
+.bk{background:none;border:none;color:var(--ac);font:inherit;cursor:pointer;padding:6px 0;margin-bottom:6px}
+.t{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.t th,.t td{padding:10px 12px;text-align:right;vertical-align:top;border-bottom:1px solid var(--bd);font-size:.92rem}
+.t th{width:32%;background:var(--ac2);color:var(--ac);font-weight:700}
+.t tr:last-child th,.t tr:last-child td{border-bottom:none}
+.t a{color:var(--ac);word-break:break-word}.ok{color:var(--ok)}.no{color:var(--no)}
+.en{direction:ltr;text-align:left;color:var(--mu);font-size:.95rem}
+.pf{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:16px}
+.ph{width:84px;height:84px;aspect-ratio:1/1;object-fit:cover;border-radius:14px;flex:none;border:2px solid var(--ac2)}
+.ini{display:flex;align-items:center;justify-content:center;background:var(--ac2);color:var(--ac);font-size:2rem;font-weight:700}
+.pf h2{margin:0;font-size:1.1rem}
+.pf p{margin:2px 0 8px;color:var(--mu);font-size:.85rem}
+.pf a{display:inline-block;margin-inline-end:6px;padding:4px 12px;border-radius:20px;background:var(--ac2);color:var(--ac);text-decoration:none;font-size:.85rem}
+.ft{color:var(--mu);font-size:.75rem;margin-top:16px;text-align:center}
+</style>
 </head>
 <body>
-
-    <header>
-        <h1>موسوعة مواد التجميل — Hashim Raw Materials Encyclopedia</h1>
-        <p>المرجع العلمي الشامل للمواد الخام والأبواب الدراسية الصيدلانية والتجميلية</p>
-    </header>
-
-    <div class="container">
-        <!-- واجهة ترحيبية مع صورة رمزية احترافية -->
-        <div class="hero-banner">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&crop=faces" alt="صورة إشرافية">
-            <h2 style="margin: 0 0 5px 0; color: var(--primary-color);">مرحباً بكم في المنصة التعليمية</h2>
-            <p style="color: var(--text-muted); margin: 0; font-size: 14px;">تصفح المواد والأبواب بكل سهولة ويسر مباشرة من قاعدة البيانات.</p>
-        </div>
-
-        <!-- شريط البحث -->
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="ابحث عن مادة خام، أو عنوان باب، أو تفاصيل..." oninput="filterData()">
-        </div>
-
-        <!-- قسم المواد الخام -->
-        <div class="section-title">🧪 المواد الخام (Raw Materials)</div>
-        <div id="rawMaterialsContainer" class="grid">
-            <div class="loading-text">جاري تحميل المواد الخام...</div>
-        </div>
-
-        <!-- قسم الأبواب الدراسية -->
-        <div class="section-title">📚 الأبواب والمواد الدراسية</div>
-        <div id="chaptersContainer">
-            <div class="loading-text">جاري تحميل الأبواب الدراسية...</div>
-        </div>
-    </div>
-
-    <!-- نافذة منبثقة لعرض تفاصيل البطاقة بشكل مرتب وآمن -->
-    <div id="detailsModal" class="modal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModalDirect()">×</button>
-            <h3 id="modalTitle" style="color: var(--primary-dark); margin-top: 0; margin-bottom: 15px;"></h3>
-            <p id="modalBody" style="color: var(--text-main); line-height: 1.6; margin: 0; white-space: pre-wrap;"></p>
-        </div>
-    </div>
-
-    <footer>
-        <p>جميع الحقوق محفوظة - موسوعة مواد التجميل — Hashim Raw Materials Encyclopedia</p>
-        <p>للتواصل والاستفسار: <span dir="ltr" style="font-weight: bold;">0998607716</span></p>
-        <a href="tel:0998607716" class="contact-btn">📞 اتصال مباشر</a>
-    </footer>
-
-    <script>
-        // إعدادات الاتصال المباشر بقاعدة بيانات Supabase
-        const SUPABASE_URL = 'https://kjgdntatnldotuhbxqle.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_RoXSjo-ASEX-NYQzJ1t_Lw_TPQF_iwN';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let globalRaw = [];
-        let globalChapters = [];
-        let globalItems = [];
-
-        // متغيرات تتبع حالات التحميل بصورة مستقلة تماماً
-        let rawLoadFailed = false;
-        let chaptersLoadFailed = false;
-        let itemsLoadFailed = false;
-
-        // دالة آمنة لمنع حقن الكود (XSS) باستخدام textContent حصراً
-        function createSafeElement(tag, className, textContent) {
-            const el = document.createElement(tag);
-            if (className) el.className = className;
-            if (textContent !== undefined && textContent !== null) {
-                el.textContent = textContent;
-            }
-            return el;
-        }
-
-        async function loadData() {
-            try {
-                const [rawRes, chaptersRes, itemsRes] = await Promise.allSettled([
-                    supabase.from('raw_materials').select('*'),
-                    supabase.from('chapters').select('*').order('order_index', { ascending: true }),
-                    supabase.from('items').select('*')
-                ]);
-
-                // 1. معالجة جدول المواد الخام بشكل مستقل
-                if (rawRes.status === 'fulfilled' && !rawRes.value.error) {
-                    globalRaw = rawRes.value.data || [];
-                    rawLoadFailed = false;
-                } else {
-                    rawLoadFailed = true;
-                    document.getElementById('rawMaterialsContainer').innerHTML = '';
-                    document.getElementById('rawMaterialsContainer').appendChild(
-                        createSafeElement('div', 'error-text', '❌ تعذر تحميل المواد الخام من قاعدة البيانات.')
-                    );
-                }
-
-                // 2. معالجة جدول الأبواب
-                if (chaptersRes.status === 'fulfilled' && !chaptersRes.value.error) {
-                    globalChapters = chaptersRes.value.data || [];
-                    chaptersLoadFailed = false;
-                } else {
-                    chaptersLoadFailed = true;
-                }
-
-                // 3. معالجة جدول المواد التابعة
-                if (itemsRes.status === 'fulfilled' && !itemsRes.value.error) {
-                    globalItems = itemsRes.value.data || [];
-                    itemsLoadFailed = false;
-                } else {
-                    itemsLoadFailed = true;
-                }
-
-                // معالجة عرض الأبواب والمواد بناءً على نجاح أو فشل الجداول المرتبطة
-                const chaptersContainer = document.getElementById('chaptersContainer');
-                chaptersContainer.innerHTML = '';
-
-                if (chaptersLoadFailed && itemsLoadFailed) {
-                    chaptersContainer.appendChild(createSafeElement('div', 'error-text', '❌ تعذر تحميل الأبواب والمواد الدراسية.'));
-                } else if (chaptersLoadFailed && !itemsLoadFailed) {
-                    chaptersContainer.appendChild(createSafeElement('div', 'error-text', '❌ تعذر تحميل الأبواب الدراسية.'));
-                } else if (!chaptersLoadFailed && itemsLoadFailed) {
-                    chaptersContainer.appendChild(createSafeElement('div', 'error-text', '❌ تعذر تحميل المواد التابعة للفصول.'));
-                } else {
-                    // إذا نجح تحميل الأبواب والمواد معاً
-                    renderChaptersAndItems(globalChapters, globalItems);
-                }
-
-                // إذا نجح تحميل المواد الخام وحدها (ولم يفشل) يتم عرضها
-                if (!rawLoadFailed) {
-                    renderRawMaterials(globalRaw);
-                }
-
-            } catch (err) {
-                console.error("خطأ عام أثناء جلب البيانات:", err);
-                if (rawLoadFailed || true) {
-                    document.getElementById('rawMaterialsContainer').innerHTML = '';
-                    document.getElementById('rawMaterialsContainer').appendChild(createSafeElement('div', 'error-text', '❌ حدث خطأ غير متوقع في الاتصال.'));
-                }
-                document.getElementById('chaptersContainer').innerHTML = '';
-                document.getElementById('chaptersContainer').appendChild(createSafeElement('div', 'error-text', '❌ حدث خطأ غير متوقع في الاتصال.'));
-            }
-        }
-
-        function renderRawMaterials(rawList) {
-            const rawContainer = document.getElementById('rawMaterialsContainer');
-            rawContainer.innerHTML = '';
-            
-            if (rawList.length === 0) {
-                const p = createSafeElement('p', '', 'لا توجد مواد خام مضافة حالياً.');
-                p.style.color = 'var(--text-muted)';
-                rawContainer.appendChild(p);
-            } else {
-                rawList.forEach(r => {
-                    const card = createSafeElement('div', 'card');
-                    card.onclick = () => showDetails(r.name || 'مادة خام', r.description || 'لا توجد تفاصيل متاحة.');
-                    
-                    const h3 = createSafeElement('h3', '', r.name || 'بدون اسم');
-                    const p = createSafeElement('p', '', r.description || 'لا توجد تفاصيل متاحة.');
-                    
-                    card.appendChild(h3);
-                    card.appendChild(p);
-                    rawContainer.appendChild(card);
-                });
-            }
-        }
-
-        function renderChaptersAndItems(chaptersList, itemsList) {
-            const chaptersContainer = document.getElementById('chaptersContainer');
-            chaptersContainer.innerHTML = '';
-
-            if (chaptersList.length === 0) {
-                const p = createSafeElement('p', '', 'لا توجد أبواب دراسية مضافة حالياً.');
-                p.style.color = 'var(--text-muted)';
-                chaptersContainer.appendChild(p);
-                return;
-            }
-
-            chaptersList.forEach(ch => {
-                const chapterBox = createSafeElement('div', 'chapter-box');
-                const chTitle = createSafeElement('h3', 'chapter-title', `📖 ${ch.title_ar || ch.title_en || 'باب دراسي'}`);
-                chapterBox.appendChild(chTitle);
-
-                const chItems = itemsList.filter(i => i.chapter_id === ch.id);
-                
-                if (chItems.length === 0) {
-                    const noItemsP = createSafeElement('p', '', 'لا توجد مواد مدرجة تحت هذا الباب حالياً.');
-                    noItemsP.style.cssText = 'font-size:13px; color:var(--text-muted); margin-top:8px;';
-                    chapterBox.appendChild(noItemsP);
-                } else {
-                    const gridDiv = createSafeElement('div', 'grid');
-                    gridDiv.style.marginTop = '12px';
-
-                    chItems.forEach(i => {
-                        const itemCard = createSafeElement('div', 'card');
-                        itemCard.style.background = '#fafbfc';
-                        itemCard.onclick = () => showDetails(i.name_ar || i.name_en || 'مادة دراسية', i.details || 'لا توجد تفاصيل.');
-
-                        const itemH3 = createSafeElement('h3', '', i.name_ar || i.name_en || 'مادة بدون اسم');
-                        const itemP = createSafeElement('p', '', i.details || 'لا توجد تفاصيل.');
-
-                        itemCard.appendChild(itemH3);
-                        itemCard.appendChild(itemP);
-                        gridDiv.appendChild(itemCard);
-                    });
-
-                    chapterBox.appendChild(gridDiv);
-                }
-
-                chaptersContainer.appendChild(chapterBox);
-            });
-        }
-
-        // تفاصيل البطاقة المنبثقة
-        function showDetails(title, details) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalBody').textContent = details;
-            document.getElementById('detailsModal').style.display = 'flex';
-        }
-
-        function closeModal(event) {
-            if (event.target.id === 'detailsModal') {
-                document.getElementById('detailsModal').style.display = 'none';
-            }
-        }
-
-        function closeModalDirect() {
-            document.getElementById('detailsModal').style.display = 'none';
-        }
-
-        // وظيفة البحث المحدثة بدقة لجمع الفصول المطابقة (بكل موادها) مع المواد الفردية المطابقة دون تكرار
-        function filterData() {
-            const query = document.getElementById('searchInput').value.trim().toLowerCase();
-            
-            // التعامل مع فشل تحميل المواد الخام أثناء البحث إذا كان الجدول متعثراً
-            if (!rawLoadFailed) {
-                const filteredRaw = globalRaw.filter(r => 
-                    (r.name || '').toLowerCase().includes(query) || 
-                    (r.description || '').toLowerCase().includes(query)
-                );
-                renderRawMaterials(filteredRaw);
-            }
-
-            if (chaptersLoadFailed || itemsLoadFailed) {
-                return; // إذا كانت الفصول أو المواد متعثرة، نتوقف عن فلترتها ونكتفي برسائل الخطأ الخاصة بها
-            }
-
-            if (!query) {
-                renderChaptersAndItems(globalChapters, globalItems);
-                return;
-            }
-
-            // 1. الأبواب التي تطابق عناوينها كلمة البحث
-            const matchingChapters = globalChapters.filter(ch => 
-                (ch.title_ar || '').toLowerCase().includes(query) || 
-                (ch.title_en || '').toLowerCase().includes(query)
-            );
-
-            // معرفات الأبواب المطابقة للبحث كفصول
-            const chapterIdsToInclude = new Set(matchingChapters.map(ch => ch.id));
-
-            // 2. المواد الدراسية التي تطابق البحث بشكل فردي
-            const matchingItems = globalItems.filter(i => 
-                (i.name_ar || '').toLowerCase().includes(query) || 
-                (i.name_en || '').toLowerCase().includes(query) || 
-                (i.details || '').toLowerCase().includes(query)
-            );
-
-            // إضافة معرفات الأبواب الخاصة بالمقادير أو المواد المطابقة فردياً لكي تظهر فصولها أيضاً
-            matchingItems.forEach(i => {
-                if (i.chapter_id) {
-                    chapterIdsToInclude.add(i.chapter_id);
-                }
-            });
-
-            // تصفية قائمة الفصول النهائية المراد عرضها
-            const finalChapters = globalChapters.filter(ch => chapterIdsToInclude.has(ch.id));
-
-            // تجميع المواد لكل فصل نهائي بطريقة مانعة للتكرار ودقيقة:
-            // - إذا تطابق الفصل بالكامل مع البحث: نعرض جميع مواده.
-            // - إذا طابق البحث مادة بشكل فردي داخل فصل آخر: نعرض تلك المادة المطابقة فقط ضمن فصلها.
-            let activeItemsList = [];
-            finalChapters.forEach(ch => {
-                const isChapterMatched = matchingChapters.some(mc => mc.id === ch.id);
-                const chAllItems = globalItems.filter(i => i.chapter_id === ch.id);
-
-                if (isChapterMatched) {
-                    // إذا كان الفصل مطاباقاً للبحث، ندرج جميع مواده
-                    activeItemsList.push(...chAllItems);
-                } else {
-                    // إذا لم يتطابق الفصل، ندرج فقط المواد التابعة له والتي حققت مطابقة فردية
-                    const chMatchedItems = chAllItems.filter(i => matchingItems.some(mi => mi.id === i.id));
-                    activeItemsList.push(...chMatchedItems);
-                }
-            });
-
-            // إزالة أي تكرار محتمل للمواد بناءً على الـ id
-            const uniqueItemsMap = new Map();
-            activeItemsList.forEach(item => uniqueItemsMap.set(item.id, item));
-            const finalItemsList = Array.from(uniqueItemsMap.values());
-
-            renderChaptersAndItems(finalChapters, finalItemsList);
-        }
-
-        // تشغيل عملية الجلب فور تحميل الصفحة
-        loadData();
-    </script>
+<div class="w" id="app"></div>
+<script>
+/* عدّل بياناتك هنا */
+const ME={name:"هاشم فارمسي",intro:"مرحباً بيك في دليلك العملي لمواد التركيبات التجميلية. هنا بتلقى كل مادة باسمها العربي والإنجليزي وتعريفها الكامل، وتعرف بتشتغل مع شنو وما بتشتغل مع شنو.",phone:"0998607719",photo:"photo.jpg"};
+const S=[
+{n:"المستحلبات",e:"Emulsifiers",i:"🧴",m:[
+["سيتيريل الكحول","Cetearyl Alcohol","كحول دهني (خليط سيتيل وستيريل) يُستخدم كمكثّف ومثبّت للمستحلب ويعطي ملمساً كريمياً ناعماً.","مكثّف / مثبّت مستحلب","2–5%","غير مؤثر","مستحلبات (بوليسوربات 60، سيتيريث-20)، الزيوت، الزبدات","لا يتوافق مع شيء بشكل خاص، لكن النسبة العالية تعطي ملمساً ثقيلاً وشمعياً","يُذاب مع الطور الزيتي بالتسخين"],
+["بوليسوربات 80","Polysorbate 80","مستحلب غير أيوني (HLB ≈ 15) يُكوّن مستحلب زيت في ماء ويُذيب الزيوت العطرية والزيوت الخفيفة.","مستحلب زيت/ماء، مذيب","1–5%","3–9","الزيوت، الكحولات الدهنية، سبان 80 (للتوازن)","قد يقلّل فعالية بعض المواد الحافظة مثل البارابين، ولا يحب الأحماض القوية والإلكتروليتات العالية","لزج، يُضاف للطور الزيتي أو يُمزج مع الزيت أولاً"],
+["جليسريل ستيرات","Glyceryl Stearate","إستر من الجليسرين وحمض الستياريك، مستحلب ومكثّف لطيف وأصله غالباً نباتي.","مستحلب مساعد / مكثّف","2–5%","5–8","سيتيريل الكحول، حمض الستياريك، الزيوت، الزبدات","ضعيف وحده؛ يحتاج غالباً مستحلباً مساعداً. ويتأثر بالأحماض القوية","الصيغة SE (Self-Emulsifying) تحتوي على صابون بوتاسيوم وتتحسس من الأحماض"]]},
+{n:"المرطّبات",e:"Humectants",i:"💧",m:[
+["الجلسرين","Glycerin","كحول متعدد الهيدروكسيل يسحب الماء ويحبسه في الجلد، من أكثر المرطبات استخداماً وأماناً.","مرطّب","2–10%","3–10","تقريباً كل المواد: هيالورونيك، نياسيناميد، بانثينول","فوق 10% يعطي إحساساً لزجاً، وفي الجو الجاف جداً قد يسحب ماء من طبقات الجلد العميقة","يُضاف في الطور المائي، ويُستخدم لتفريق الصمغ (زانثان) قبل إضافته للماء"],
+["حمض الهيالورونيك","Hyaluronic Acid (Sodium Hyaluronate)","متعدد سكريات يحمل ماءً يعادل مئات أضعاف وزنه، يرطّب سطح الجلد ويعطي ملمساً ناعماً.","مرطّب / مكوّن للفيلم","0.1–1%","4–8","جلسرين، نياسيناميد، بانثينول، فيتامين C","pH أقل من 3.5 أو الحرارة العالية يكسّرانه، والإلكتروليتات العالية تقلل اللزوجة","يُنقع ببطء في الماء حتى ينتفخ لتفادي التكتل"],
+["البانثينول","Panthenol (Provitamin B5)","مُقدِّم فيتامين B5 يتحول في الجلد إلى حمض البانتوثينيك، يرطّب ويهدّئ ويساعد ترميم الحاجز الجلدي.","مرطّب / مهدّئ","1–5%","4–6","هيالورونيك، نياسيناميد، سيراميد، الأحماض الخفيفة","يتحلل في pH أقل من 3 أو أكثر من 8 وفي الحرارة العالية","يُضاف في الطور البارد (تحت 40 مئوية)"]]},
+{n:"الزيوت والزبدات",e:"Oils & Butters",i:"🌰",m:[
+["زبدة الشيا","Shea Butter","دهن نباتي مستخلص من ثمار الشيا، غني بالأحماض الدهنية والمواد غير القابلة للتصبن، مطرّ ومرمّم قوي.","ملطّف / مرطّب سطحي","2–10% (حتى 100% في البلسم)","غير مؤثر","الزيوت، الشموع، الزبدات الأخرى، السيتيريل الكحول","لا يذوب في الماء ويحتاج مستحلباً، وقد يتحبب (grainy) إذا بُرّد ببطء","يُذاب بالتسخين ثم يُبرّد بسرعة"],
+["زيت الجوجوبا","Jojoba Oil","شمع سائل (وليس زيتاً تقنياً) قريب من زهم الجلد، ثابت جداً ضد الأكسدة وخفيف الملمس.","ملطّف / ناقل","1–10% (ويصلح نقياً)","غير مؤثر","كل الزيوت والمواد الدهنية والفيتامينات الذائبة في الزيت","لا يذوب في الماء ولا يتحمل الإضافة المباشرة للطور المائي بدون مستحلب","ثبات عالٍ ويطوّل عمر التركيبة"],
+["زيت جوز الهند","Coconut Oil","زيت نباتي غني بحمض اللوريك، يتجمد قرب 24 مئوية ويعطي حماية سطحية.","ملطّف / مكوّن للصابون","2–15%","غير مؤثر","زبدة الشيا، الشموع، زيت الجوجوبا","قد يسد المسام (comedogenic) للوجه، ويتجمد في الجو البارد فيؤثر على القوام","يُفضّل المكرر للوجه"]]},
+{n:"المواد الفعّالة",e:"Actives",i:"✨",m:[
+["نياسيناميد","Niacinamide (Vitamin B3)","شكل من فيتامين B3 يقلل مظهر المسام والبقع ويعزز حاجز الجلد ويضبط الدهون.","فعّال / منظم الزهم","2–5% (أكثر نطاق مدعوم بدراسات سريرية؛ تقييم CIR غطّى مستويات استخدام حتى 3% وقت إصداره)","5–7","هيالورونيك، بانثينول، زنك، ريتينول، وبقية الفعّالات (لا تعارضات موثقة)","لا تعارضات موثقة مع الفعّالات الأخرى. نظرياً قد يتحلل لحمض النيكوتينيك (احمرار) في وسط شديد الحموضة أو القلوية مع حرارة","ثابت نسبياً، تجنّب التسخين الزائد مع pH متطرف"],
+["فيتامين سي","Vitamin C (L-Ascorbic Acid)","مضاد أكسدة قوي يفتّح البقع ويحفّز الكولاجين ويحمي من التأكسد الضوئي.","مضاد أكسدة / مفتّح","5–20%","أقل من 3.5","فيتامين E، حمض الفيروليك، هيالورونيك","شديد عدم الثبات مع الهواء والضوء والماء والحديد والنحاس؛ لا يُستخدم مع الريتينول في نفس الوقت","يُعبّأ في عبوة معتمة محكمة ويُضاف في آخر التحضير"],
+["ريتينول","Retinol (Vitamin A)","مشتق فيتامين A يسرّع تجدد الخلايا ويقلل التجاعيد وحب الشباب.","فعّال مضاد للشيخوخة","حتى 0.3% مكافئ ريتينول لمنتجات البقاء على الجلد، وحتى 0.05% لمستحضرات الجسم (الحدود القانونية الأوروبية)","5–6","هيالورونيك، نياسيناميد، سيراميد، ببتيدات","يتحلل بالضوء والهواء، ويُتجنب جمعه مع مقشّرات قوية (AHA/BHA) وبنزويل بيروكسايد لزيادة التهيج، ويُتجنب أثناء الحمل بإرشاد طبي","عبوة معتمة وأنبوب مضغوط، ويُستخدم ليلاً مع واقي شمس نهاراً"],
+["حمض الساليسيليك","Salicylic Acid (BHA)","حمض يذوب في الزيت ويخترق المسام ويقشّر الطبقة السطحية، فعال لحب الشباب والرؤوس السوداء.","مقشّر / مضاد حب الشباب","حتى 2% لمنتجات البقاء على الجلد (0.5% في مستحضر الجسم والماسكارا وظلال العيون والروج والرول-أون)، وحتى 3% لمنتجات الشعر التي تُشطف، و0.5% كحافظ","3–4","نياسيناميد، هيالورونيك، زنك","لا يُستخدم للأطفال تحت 3 سنوات (ما عدا الشامبو)، ويهيّج العين بشدة، ويُتجنب في الحمل، ولا يُجمع مع الريتينول أو أحماض قوية أخرى","يُذاب أولاً في الكحول أو البروبيلين جلايكول"]]},
+{n:"المواد الحافظة",e:"Preservatives",i:"🛡️",m:[
+["فينوكسي إيثانول","Phenoxyethanol","مادة حافظة واسعة الطيف تعمل ضد البكتيريا والفطريات، وتستخدم كثيراً في الكريمات والسيرومات.","حافظ","حتى 1.0% (الحد الأقصى القانوني، الملحق V رقم 29)","3–10","إيثيل هكسيل جلسرين، الغليكولات","لا تتجاوز 1%؛ لم نوثّق تعارضات محددة","أضفه في الطور البارد وتحقق من فعالية الحفظ (challenge test)"],
+["سوربات البوتاسيوم","Potassium Sorbate","ملح بوتاسيوم لحمض السوربيك، فعال أكثر ضد الفطريات والخمائر.","حافظ","حتى 0.6% محسوباً كحمض السوربيك (الملحق V رقم 4)","أقل من 6","بنزوات الصوديوم، مواد حافظة أخرى","يفقد فعاليته عند pH فوق 6","يُذاب في الماء ويُضاف للطور المائي"]]},
+{n:"المكثّفات",e:"Thickeners",i:"🌀",m:[
+["صمغ الزانثان","Xanthan Gum","بوليمر سكري ينتجه التخمر، يكثّف الطور المائي ويثبّت المستحلبات ويتحمل نطاق pH واسع.","مكثّف / مثبّت","0.2–1%","3–12","الجلسرين، معظم المواد المائية","يتكتل إذا أضيف جافاً للماء، وقد يعطي ملمساً لزجاً عند النسبة العالية","يُفرَّق بالجلسرين أو الزيت أولاً ثم يُضاف للماء"],
+["الكاربومر","Carbomer","بوليمر أكريليك يتكثف بعد المعادلة ويكوّن جل شفاف ومستقر.","مكثّف / مكوّن للجل","0.2–1%","5.5–7 بعد التعديل","التراي إيثانول أمين، هيدروكسيد الصوديوم، جلسرين","يفقد لزوجته مع الإلكتروليتات العالية والأحماض القوية والمواد الموجبة الشحنة","يُنثر ببطء على الماء ويُعدَّل pH لإظهار اللزوجة"]]},
+{n:"مضادات الأكسدة",e:"Antioxidants",i:"🍃",m:[
+["فيتامين هـ","Tocopherol (Vitamin E)","مضاد أكسدة ذائب في الزيت يحمي الزيوت من التزنخ ويدعم الحماية من أضرار الأشعة.","مضاد أكسدة","0.1–1%","غير مؤثر","فيتامين C، حمض الفيروليك، الزيوت","لا يتوافق مع شيء بشكل خاص، والنسبة العالية قد تعطي ملمساً دهنياً","يُضاف في الطور الزيتي أو البارد"]]}
+];
+const G=[["قاعدة CIR لسلامة مكونات التجميل (ابحث بالاسم)","https://www.cir-safety.org/ingredients"],["اللائحة الأوروبية 1223/2009","https://eur-lex.europa.eu/eli/reg/2009/1223/oj"]];
+const REF={
+"Niacinamide":[["CIR, Int J Toxicol 2005;24(Suppl 5):1–31","https://pubmed.ncbi.nlm.nih.gov/16596767/"],["Gehring W., J Cosmet Dermatol 2004;3(2):88–93","https://doi.org/10.1111/j.1473-2130.2004.00115.x"]],
+"Retinol":[["SCCS/1639/21 (2022): رأي اللجنة العلمية الأوروبية عن فيتامين A","https://health.ec.europa.eu/publications/revision-scientific-opinion-sccs157616-vitamin-retinol-retinyl-acetate-retinyl-palmitate_en"],["اللائحة (EU) 2024/996: الحدود القانونية","https://eur-lex.europa.eu/eli/reg/2024/996/oj"]],
+"Salicylic Acid":[["اللائحة (EU) 2019/1966 ورأي SCCS لسنة 2018","https://www.legislation.gov.uk/eur/2019/1966/data.html"],["ملخص القيود المحدّثة (Omnibus III، اللائحة 2021/850)","https://coslaw.eu/watchout/salicylicacid/"]],
+"Phenoxyethanol":[["اللائحة 1223/2009، نص الملحق V (رقم 29)","https://legislation.gov.uk/eur/2009/1223/annex/V/division/2/data.html"]],
+"Potassium Sorbate":[["اللائحة 1223/2009، نص الملحق V (رقم 4)","https://legislation.gov.uk/eur/2009/1223/annex/V/division/2/data.html"]]
+};
+const R=[["الاسم بالإنجليزي",1],["التعريف الكامل",2],["الوظيفة",3],["نسبة الاستخدام المعتادة",4],["نطاق pH المناسب",5],["يشتغل مع ✅",6],["ما يشتغل مع ❌ / تنبيهات",7],["ملاحظات التحضير",8]];
+const app=document.getElementById('app');
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function home(){
+ const wa=ME.phone.replace(/\D/g,'').replace(/^0/,'249');
+ app.innerHTML=`<div class="pf"><img class="ph" src="${ME.photo}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'ph ini',textContent:ME.name.trim()[0]}))"><div><h2>${ME.name}</h2><p>${ME.intro}</p><a href="tel:${ME.phone.replace(/\s/g,'')}">📞 ${ME.phone}</a><a href="https://wa.me/${wa}">واتساب</a></div></div>
+ <h1>🧪 دليل مواد التركيبات التجميلية</h1><p class="sub">اختار القسم، ثم المادة لتشوف جدول المعلومات الكامل</p>
+ <input id="q" placeholder="🔍 ابحث عن مادة بالعربي أو الإنجليزي"><div id="res"></div>
+ <div class="g" id="gr">${S.map((s,i)=>`<button class="b" data-s="${i}"><span class="i">${s.i}</span>${s.n}<small>${s.e} · ${s.m.length}</small></button>`).join('')}</div>
+ <p class="ft">المراجع الأساسية: لائحة مستحضرات التجميل الأوروبية 1223/2009 (الملحقان III وV)، آراء اللجنة العلمية SCCS، وتقارير CIR. حالة التوثيق ومصادر كل مادة داخل جدولها.</p>`;
+ document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>sec(+b.dataset.s));
+ document.getElementById('q').oninput=e=>{
+  const v=e.target.value.trim().toLowerCase(),r=document.getElementById('res'),g=document.getElementById('gr');
+  if(!v){r.innerHTML='';g.style.display='';return}
+  g.style.display='none';let h='';
+  S.forEach((s,si)=>s.m.forEach((m,mi)=>{if((m[0]+m[1]).toLowerCase().includes(v))h+=`<button class="b" data-s="${si}" data-m="${mi}"><span>${m[0]}</span><small class="en">${m[1]}</small></button>`}));
+  r.innerHTML=`<div class="l">${h||'<p class="sub">ما لقينا نتيجة</p>'}</div>`;
+  r.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>mat(+b.dataset.s,+b.dataset.m));
+ };
+}
+function sec(i){
+ const s=S[i];
+ app.innerHTML=`<button class="bk" id="bk">→ رجوع للأقسام</button><h1>${s.i} ${s.n}</h1><p class="sub">${s.e}</p>
+ <div class="l">${s.m.map((m,j)=>`<button class="b" data-m="${j}"><span>${m[0]}<small class="en">${m[1]}</small></span><span>‹</span></button>`).join('')}</div>`;
+ document.getElementById('bk').onclick=home;
+ document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>mat(i,+b.dataset.m));
+ scrollTo(0,0);
+}
+function mat(i,j){
+ const m=S[i].m[j];
+ const key=Object.keys(REF).find(k=>m[1].startsWith(k)),v=key?REF[key]:null,refs=(v||[]).concat(G);
+ const cls=k=>k==6?' class="ok"':k==7?' class="no"':'';
+ app.innerHTML=`<button class="bk" id="bk">→ رجوع لـ ${S[i].n}</button><h1>${m[0]}</h1><p class="sub en">${m[1]}</p>
+ <table class="t">${R.slice(1).map(([l,k])=>`<tr><th>${l}</th><td${cls(k)}>${esc(m[k])}</td></tr>`).join('')}<tr><th>حالة التوثيق</th><td>${v?'✅ الأرقام والحدود الأساسية موثّقة بالمراجع أدناه':'⚠️ نطاق شائع في الصناعة، غير موثّق بعد بمرجع محدد (الأرقام تقريبية)'}</td></tr><tr><th>المراجع</th><td>${refs.map(([t,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${t}</a>`:t).join('<br>')}</td></tr></table>`;
+ document.getElementById('bk').onclick=()=>sec(i);
+ scrollTo(0,0);
+}
+home();
+</script>
 </body>
 </html>
